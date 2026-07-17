@@ -1,11 +1,28 @@
-<div align="center">
+# AUDIT ALP - Agentic Intelligence Engine
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+AUDIT ALP is an enterprise-grade Proof of Concept (PoC) demonstrating an autonomous AI workforce for internal auditing. It simulates a team of specialized AI agents working sequentially to process documents, understand business context, identify risks, and generate executive reports.
 
-  <h1>Built with AI Studio</h2>
+## Key Features
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+- **Audit Orchestrator**: Simulates multiple AI departments (Document Intelligence, Business Understanding, Risk & Controls, etc.).
+- **Business Intelligence**: Generates executive KPIs, risk heatmaps, and budget variance analytics.
+- **Review Center**: Human-in-the-loop interface for approving, rejecting, or requesting revisions on AI findings.
+- **Executive Reporting**: Automated generation of boardroom-ready audit reports.
+- **Demo Mode**: One-click population of sample data for instant demonstrations.
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+## Tech Stack
 
-</div>
+- **Frontend**: React 18, Vite, Tailwind CSS, Framer Motion, Recharts, Radix UI (shadcn/ui).
+- **Backend**: Node.js, Express (compiled via esbuild).
+- **Architecture**: Full-stack modular monolith ready for containerized deployment.
+
+## Repository Structure
+
+- `/src`: Frontend React application.
+  - `/components`: Reusable UI components.
+  - `/pages`: Main application views (Dashboard, AuditExecution, ReviewCenter, etc.).
+- `server.ts`: Express backend handling API routes and simulating the AI workforce.
+- `/docs`: Architecture, installation, and demo instructions.
+- `/data`: Sample datasets for the demo mode.
+
+For more details, please see the documentation in the `/docs` directory.
