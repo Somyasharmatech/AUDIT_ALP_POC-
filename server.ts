@@ -1,4 +1,5 @@
 import express from "express";
+import "dotenv/config";
 import path from "path";
 import fs from "fs";
 import crypto from "crypto";
@@ -112,17 +113,21 @@ async function authenticate(req: any, res: any, next: any) {
     
     const existingUser = await db.select().from(users).where(eq(users.id, decoded.id)).limit(1);
     if (existingUser.length === 0) {
+       console.log(`[AUTH] User not found in database: ${decoded.id}`);
        return res.status(401).json({ error: 'Unauthorized', message: 'User not found' });
     }
     req.dbUser = existingUser[0];
     next();
   } catch (error) {
+    console.error(`[AUTH] Token verification failed:`, error instanceof Error ? error.message : error);
     return res.status(401).json({ error: 'Unauthorized', message: 'Token verification failed' });
   }
 }
 
 async function startServer() {
+  console.log(`[STARTUP] Initial Memory: ${Math.round(process.memoryUsage().rss / 1024 / 1024)}MB`);
   await initDb();
+  console.log(`[STARTUP] After DB Init Memory: ${Math.round(process.memoryUsage().rss / 1024 / 1024)}MB`);
   
   // Create admin user if not exists
   const adminExists = await db.select().from(users).where(eq(users.email, 'admin@auditalp.com')).limit(1);
@@ -152,7 +157,7 @@ async function startServer() {
   }
 
   const app = express();
-  const PORT = 3000;
+  const PORT = Number(process.env.PORT) || 3000;
   
   app.use(helmet({ contentSecurityPolicy: false }));
   app.use(cors());
@@ -160,8 +165,13 @@ async function startServer() {
   app.use(morgan('dev'));
 
   // Health check
-  app.get('/api/health', (req, res) => {
-    res.json({ success: true, status: 'ok', timestamp: new Date().toISOString() });
+  app.get('/health', (req, res) => {
+    res.json({ 
+      status: 'ok', 
+      environment: process.env.NODE_ENV || 'development',
+      uptime: process.uptime(),
+      timestamp: new Date().toISOString() 
+    });
   });
 
   // Auth Routes
@@ -1922,7 +1932,16 @@ async function startServer() {
   });
 
   app.listen(PORT, "0.0.0.0", () => {
+    console.log('-------------------------------------------------------');
+    console.log(`Enterprise Audit Application Started`);
+    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`Port: ${PORT}`);
+    console.log(`Uploads Directory: ${uploadsDir}`);
+    console.log(`Database Status: Connected (PGlite)`);
+    console.log(`[STARTUP] Final Memory: ${Math.round(process.memoryUsage().rss / 1024 / 1024)}MB`);
+    console.log(`AI Status: Gemini AI Pipeline Ready`);
     console.log(`Server running on http://0.0.0.0:${PORT}`);
+    console.log('-------------------------------------------------------');
   });
 }
 

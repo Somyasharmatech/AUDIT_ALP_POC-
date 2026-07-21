@@ -1,4 +1,3 @@
-import { GoogleGenAI } from '@google/genai';
 import { aiObservability } from './observability.js';
 import { validateAiModuleOutput } from './validator.js';
 import { ValidatedAiOutput } from './types.js';
@@ -6,10 +5,11 @@ import { ValidatedAiOutput } from './types.js';
 // Model definition according to system guidelines
 export const PRIMARY_GEMINI_MODEL = 'gemini-3.6-flash';
 
-let genAIClient: GoogleGenAI | null = null;
+let genAIClient: any = null;
 
-export function getGeminiClient(): GoogleGenAI {
+export async function getGeminiClient(): Promise<any> {
   if (!genAIClient) {
+    const { GoogleGenAI } = await import('@google/genai');
     const apiKey = process.env.GEMINI_API_KEY || 'fake_development_key';
     genAIClient = new GoogleGenAI({
       apiKey,
@@ -66,7 +66,7 @@ export async function executeAiModule<T>(options: CallAiOptions): Promise<Valida
         throw new Error("GEMINI_API_KEY is not configured or is a placeholder");
       }
 
-      const client = getGeminiClient();
+      const client = await getGeminiClient();
 
       // Implement timeout wrapper
       const timeoutPromise = new Promise((_, reject) => {

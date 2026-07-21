@@ -1,29 +1,71 @@
-import { runDocumentIntelligence } from './services/documentIntelligence.js';
-import { runHistoricalAnalyzer } from './services/historicalAnalyzer.js';
-import { runSopAnalyzer } from './services/sopAnalyzer.js';
-import { runFinancialAnalyzer } from './services/financialAnalyzer.js';
-import { runRiskEngine } from './services/riskEngine.js';
-import { runPlanningGenerator } from './services/planningGenerator.js';
-import { runScopingGenerator } from './services/scopingGenerator.js';
-import { runAuditProgramGenerator } from './services/auditProgramGenerator.js';
 import { aiObservability } from './observability.js';
+export { aiObservability };
+
+export async function runDocumentIntelligence(input: any) {
+  const { runDocumentIntelligence } = await import('./services/documentIntelligence.js');
+  return runDocumentIntelligence(input);
+}
+
+export async function runHistoricalAnalyzer(input: any) {
+  const { runHistoricalAnalyzer } = await import('./services/historicalAnalyzer.js');
+  return runHistoricalAnalyzer(input);
+}
+
+export async function runSopAnalyzer(input: any) {
+  const { runSopAnalyzer } = await import('./services/sopAnalyzer.js');
+  return runSopAnalyzer(input);
+}
+
+export async function runFinancialAnalyzer(input: any) {
+  const { runFinancialAnalyzer } = await import('./services/financialAnalyzer.js');
+  return runFinancialAnalyzer(input);
+}
+
+export async function runRiskEngine(input: any) {
+  const { runRiskEngine } = await import('./services/riskEngine.js');
+  return runRiskEngine(input);
+}
+
+export async function runPlanningGenerator(input: any) {
+  const { runPlanningGenerator } = await import('./services/planningGenerator.js');
+  return runPlanningGenerator(input);
+}
+
+export async function runScopingGenerator(input: any) {
+  const { runScopingGenerator } = await import('./services/scopingGenerator.js');
+  return runScopingGenerator(input);
+}
+
+export async function runAuditProgramGenerator(input: any) {
+  const { runAuditProgramGenerator } = await import('./services/auditProgramGenerator.js');
+  return runAuditProgramGenerator(input);
+}
+
+export async function executeStage1(input: any) {
+  const { executeStage1 } = await import('./stagedOrchestrator.js');
+  return executeStage1(input);
+}
+
+export async function executeStage2(input: any) {
+  const { executeStage2 } = await import('./stagedOrchestrator.js');
+  return executeStage2(input);
+}
+
+export async function executeStage3(input: any) {
+  const { executeStage3 } = await import('./stagedOrchestrator.js');
+  return executeStage3(input);
+}
+
+export async function executeStage4(input: any) {
+  const { executeStage4 } = await import('./stagedOrchestrator.js');
+  return executeStage4(input);
+}
 
 export * from './types.js';
 export * from './observability.js';
 export * from './orchestrator.js';
 export * from './validator.js';
 export * from './humanReview.js';
-export * from './stagedOrchestrator.js';
-export {
-  runDocumentIntelligence,
-  runHistoricalAnalyzer,
-  runSopAnalyzer,
-  runFinancialAnalyzer,
-  runRiskEngine,
-  runPlanningGenerator,
-  runScopingGenerator,
-  runAuditProgramGenerator
-};
 
 export interface FullAuditPipelineInput {
   engagementId: string;
