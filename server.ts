@@ -159,6 +159,11 @@ async function startServer() {
   app.use(express.json({ limit: '10mb' }));
   app.use(morgan('dev'));
 
+  // Health check
+  app.get('/api/health', (req, res) => {
+    res.json({ success: true, status: 'ok', timestamp: new Date().toISOString() });
+  });
+
   // Auth Routes
   app.post('/api/auth/login', async (req: any, res: any, next: any) => {
     console.log(`[AUTH] Login attempt for email: ${req.body?.email}`);
@@ -1875,6 +1880,15 @@ async function startServer() {
     }
   });
 
+  // API 404 Handler - If it starts with /api but didn't match any route
+  app.use('/api', (req, res) => {
+    console.warn(`[API 404] ${req.method} ${req.originalUrl}`);
+    res.status(404).json({ 
+      success: false, 
+      message: `API route not found: ${req.method} ${req.originalUrl}` 
+    });
+  });
+
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
@@ -1914,4 +1928,12 @@ async function startServer() {
 
 startServer().catch(err => {
   console.error("CRITICAL: Server failed to start:", err);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('UNCAUGHT EXCEPTION:', err);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('UNHANDLED REJECTION at:', promise, 'reason:', reason);
 });

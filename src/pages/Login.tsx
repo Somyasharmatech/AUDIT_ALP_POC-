@@ -41,8 +41,8 @@ export default function Login() {
       const contentType = response.headers.get("content-type");
       if (!contentType || !contentType.includes("application/json")) {
         const text = await response.text();
-        console.error("Non-JSON response received:", text);
-        throw new Error("Server returned an unexpected format. Please check backend status.");
+        console.error("Non-JSON response received. Status:", response.status, "Body preview:", text.substring(0, 500));
+        throw new Error(`Server returned an unexpected format (${response.status}). Please check backend logs.`);
       }
 
       const result = await response.json();

@@ -16,12 +16,24 @@ export class ApiClient {
     });
 
     if (!response.ok) {
-      let message = 'An error occurred';
-      try {
-        const errorData = await response.json();
-        message = errorData.message || errorData.error || message;
-      } catch (e) {
-        // Not JSON
+      let message = `Error ${response.status}: ${response.statusText}`;
+      const contentType = response.headers.get("content-type");
+      
+      if (contentType && contentType.includes("application/json")) {
+        try {
+          const errorData = await response.json();
+          message = errorData.message || errorData.error || message;
+        } catch (e) {
+          // Fallback to default message
+        }
+      } else {
+        try {
+          const text = await response.text();
+          console.error("Non-JSON error response:", text);
+          message = `Server error (${response.status}). See console for details.`;
+        } catch (e) {
+          // Fallback
+        }
       }
       throw new Error(message);
     }
