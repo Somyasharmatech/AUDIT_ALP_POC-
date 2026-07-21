@@ -1,28 +1,46 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600&family=Inter:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
-  --color-background: hsl(222.2 84% 4.9%);
-  --color-foreground: hsl(210 40% 98%);
-  --color-card: hsl(222.2 84% 4.9%);
-  --color-card-foreground: hsl(210 40% 98%);
-  --color-popover: hsl(222.2 84% 4.9%);
-  --color-popover-foreground: hsl(210 40% 98%);
-  --color-primary: hsl(217.2 91.2% 59.8%);
-  --color-primary-foreground: hsl(222.2 47.4% 11.2%);
-  --color-secondary: hsl(217.2 32.6% 17.5%);
-  --color-secondary-foreground: hsl(210 40% 98%);
-  --color-muted: hsl(217.2 32.6% 17.5%);
-  --color-muted-foreground: hsl(215 20.2% 65.1%);
-  --color-accent: hsl(217.2 32.6% 17.5%);
-  --color-accent-foreground: hsl(210 40% 98%);
-  --color-destructive: hsl(0 62.8% 30.6%);
-  --color-destructive-foreground: hsl(210 40% 98%);
-  --color-border: hsl(217.2 32.6% 17.5%);
-  --color-input: hsl(217.2 32.6% 17.5%);
-  --color-ring: hsl(224.3 76.3% 48%);
+
+  --color-background: #F8F9FA;
+  --color-foreground: #212529;
+
+  --color-card: #FFFFFF;
+  --color-card-foreground: #212529;
+
+  --color-popover: #FFFFFF;
+  --color-popover-foreground: #212529;
+
+  --color-primary: #005A9E;
+  --color-primary-foreground: #FFFFFF;
+
+  --color-secondary: #F1F3F5;
+  --color-secondary-foreground: #212529;
+
+  --color-muted: #F8F9FA;
+  --color-muted-foreground: #6C757D;
+
+  --color-accent: #E5F0FA;
+  --color-accent-foreground: #005A9E;
+
+  --color-destructive: #DC3545;
+  --color-destructive-foreground: #FFFFFF;
+
+  --color-warning: #FFC107;
+  --color-warning-foreground: #212529;
+
+  --color-success: #198754;
+  --color-success-foreground: #FFFFFF;
+
+  --color-info: #0D6EFD;
+  --color-info-foreground: #FFFFFF;
+
+  --color-border: #DEE2E6;
+  --color-input: #DEE2E6;
+  --color-ring: #005A9E;
 }
 
 @layer base {
@@ -30,7 +48,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }

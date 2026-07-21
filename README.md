@@ -26,3 +26,6 @@ AUDIT ALP is an enterprise-grade Proof of Concept (PoC) demonstrating an autonom
 - `/data`: Sample datasets for the demo mode.
 
 For more details, please see the documentation in the `/docs` directory.
+
+## Roadmap
+Please refer to `ROADMAP.md` for the current engineering roadmap, which prioritizes business workflow completion (Sprint 2-4) before AI capabilities (Sprint 5-6). Firebase has been removed in favor of simple JWT Enterprise Auth.

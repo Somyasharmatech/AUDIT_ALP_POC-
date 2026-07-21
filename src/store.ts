@@ -1,22 +1,22 @@
 import { create } from 'zustand';
-import { Audit } from '@/src/types';
 
-interface AppState {
-  audits: Audit[];
-  activeAuditId: string | null;
-  setAudits: (audits: Audit[]) => void;
-  addAudit: (audit: Audit) => void;
-  updateAudit: (id: string, updates: Partial<Audit>) => void;
-  setActiveAudit: (id: string | null) => void;
+interface User {
+  id: string;
+  email: string;
+  name?: string;
+  role: string;
 }
 
-export const useStore = create<AppState>((set) => ({
-  audits: [],
-  activeAuditId: null,
-  setAudits: (audits) => set({ audits }),
-  addAudit: (audit) => set((state) => ({ audits: [...state.audits, audit] })),
-  updateAudit: (id, updates) => set((state) => ({
-    audits: state.audits.map((a) => (a.id === id ? { ...a, ...updates } : a)),
-  })),
-  setActiveAudit: (id) => set({ activeAuditId: id }),
+interface AuthState {
+  user: User | null;
+  authInitialized: boolean;
+  setUser: (user: User | null) => void;
+  setAuthInitialized: (initialized: boolean) => void;
+}
+
+export const useStore = create<AuthState>((set) => ({
+  user: null,
+  authInitialized: false,
+  setUser: (user) => set({ user }),
+  setAuthInitialized: (initialized) => set({ authInitialized: initialized }),
 }));

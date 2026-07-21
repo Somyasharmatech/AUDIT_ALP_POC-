@@ -1,65 +1,304 @@
 import express from "express";
 import path from "path";
 import { createServer as createViteServer } from "vite";
-import { GoogleGenAI } from "@google/genai";
-import fs from "fs";
+import helmet from 'helmet';
+import cors from 'cors';
+import morgan from 'morgan';
+import multer from 'multer';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
+import { db, initDb } from './src/db/index.js';
+import { users, engagements, auditUniverse } from './src/db/schema.js';
+import { eq, like, or, and, desc } from 'drizzle-orm';
+import { SQL } from 'drizzle-orm';
 
-// Initialize AI
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const upload = multer({ storage: multer.memoryStorage() });
+const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-enterprise-key-2026';
+
+// Auth Middleware
+async function authenticate(req: any, res: any, next: any) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Unauthorized', message: 'Missing or invalid token' });
+  }
+  const token = authHeader.split('Bearer ')[1];
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    req.user = decoded;
+    
+    // Ensure user exists in our DB
+    const existingUser = await db.select().from(users).where(eq(users.id, decoded.id)).limit(1);
+    if (existingUser.length === 0) {
+       return res.status(401).json({ error: 'Unauthorized', message: 'User not found' });
+    }
+    req.dbUser = existingUser[0];
+    next();
+  } catch (error) {
+    return res.status(401).json({ error: 'Unauthorized', message: 'Token verification failed' });
+  }
+}
 
 async function startServer() {
+  await initDb();
+  
+  // Create admin user if not exists
+  const adminExists = await db.select().from(users).where(eq(users.email, 'admin@auditalp.com')).limit(1);
+  if (adminExists.length === 0) {
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash('admin123', salt);
+    await db.insert(users).values({
+      email: 'admin@auditalp.com',
+      passwordHash: hash,
+      name: 'System Administrator',
+      role: 'Administrator'
+    });
+    console.log('Admin user created: admin@auditalp.com / admin123');
+  }
+
+  // Create standard user if not exists
+  const userExists = await db.select().from(users).where(eq(users.email, 'auditor@auditalp.com')).limit(1);
+  if (userExists.length === 0) {
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash('password123', salt);
+    await db.insert(users).values({
+      email: 'auditor@auditalp.com',
+      passwordHash: hash,
+      name: 'John Auditor',
+      role: 'Audit Manager'
+    });
+  }
+
   const app = express();
   const PORT = 3000;
-
-  app.use(express.json());
-
-  // API Routes
   
-  app.get("/api/health", (req, res) => {
-    res.json({ status: "ok" });
+  // Middleware
+  app.use(helmet({
+    contentSecurityPolicy: false,
+  }));
+  app.use(cors());
+  app.use(express.json());
+  app.use(morgan('dev'));
+
+  // Auth Routes
+  app.post('/api/auth/login', async (req: any, res: any, next: any) => {
+    try {
+      const { email, password } = req.body;
+      const userList = await db.select().from(users).where(eq(users.email, email)).limit(1);
+      if (userList.length === 0) {
+        return res.status(401).json({ message: 'Invalid credentials' });
+      }
+      const user = userList[0];
+      const isMatch = await bcrypt.compare(password, user.passwordHash);
+      if (!isMatch) {
+        return res.status(401).json({ message: 'Invalid credentials' });
+      }
+      const payload = { id: user.id, email: user.email, role: user.role, name: user.name };
+      const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1d' });
+      res.json({ token, user: { id: user.id, email: user.email, name: user.name, role: user.role } });
+    } catch (e) {
+      next(e);
+    }
+  });
+  
+  app.post('/api/auth/register', async (req: any, res: any, next: any) => {
+    try {
+      const { email, password, name } = req.body;
+      const userList = await db.select().from(users).where(eq(users.email, email)).limit(1);
+      if (userList.length > 0) {
+        return res.status(400).json({ message: 'User already exists' });
+      }
+      const salt = await bcrypt.genSalt(10);
+      const hash = await bcrypt.hash(password, salt);
+      const newUser = await db.insert(users).values({
+        email,
+        passwordHash: hash,
+        name: name || email.split('@')[0],
+        role: 'Auditor'
+      }).returning();
+      const user = newUser[0];
+      const payload = { id: user.id, email: user.email, role: user.role, name: user.name };
+      const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1d' });
+      res.json({ token, user: { id: user.id, email: user.email, name: user.name, role: user.role } });
+    } catch(e) {
+      next(e);
+    }
   });
 
-  // Mock Database for PoC
-  const db = {
-    audits: [] as any[],
-  };
-
-  app.post("/api/audits", (req, res) => {
-    const newAudit = {
-      id: Math.random().toString(36).substring(7),
-      name: req.body.name,
-      department: req.body.department,
-      status: "running",
-      createdAt: new Date().toISOString(),
-      findings: [],
-      analytics: null,
-      progress: 0,
-      currentStep: "Audit Orchestrator",
-      logs: []
-    };
-    db.audits.push(newAudit);
-    res.json(newAudit);
+  app.get('/api/auth/me', authenticate, (req: any, res: any) => {
+    const u = req.dbUser;
+    res.json({ id: u.id, email: u.email, name: u.name, role: u.role });
+  });
+  
+  // Users Route (for dropdowns)
+  app.get('/api/users', authenticate, async (req: any, res: any, next: any) => {
+     try {
+       const allUsers = await db.select({ id: users.id, name: users.name, email: users.email, role: users.role }).from(users);
+       res.json(allUsers);
+     } catch (e) {
+       next(e);
+     }
   });
 
-  app.get("/api/audits", (req, res) => {
-    res.json(db.audits);
+  // Annual Audit Planning Routes (Engagements)
+  app.post("/api/audits", authenticate, async (req: any, res: any, next: any) => {
+    try {
+      const { name, department, businessUnit, financialYear, auditType, priority, status, description, startDate, expectedEndDate, planningLeadId, auditManagerId } = req.body;
+      
+      const newAudit = await db.insert(engagements).values({
+        name,
+        department,
+        businessUnit,
+        financialYear,
+        auditType,
+        priority: priority || 'Medium',
+        status: status || 'Planning',
+        description,
+        startDate,
+        expectedEndDate,
+        planningLeadId: planningLeadId || null,
+        auditManagerId: auditManagerId || null,
+        ownerId: req.dbUser.id
+      }).returning();
+      res.status(201).json(newAudit[0]);
+    } catch (e) {
+      next(e);
+    }
   });
 
-  app.get("/api/audits/:id", (req, res) => {
-    const audit = db.audits.find(a => a.id === req.params.id);
-    if (!audit) return res.status(404).json({ error: "Not found" });
-    res.json(audit);
+  app.get("/api/audits", authenticate, async (req: any, res: any, next: any) => {
+    try {
+      const { search, financialYear, department, status } = req.query;
+      let conditions = [];
+      
+      if (search) {
+        conditions.push(like(engagements.name, `%${search}%`));
+      }
+      if (financialYear) {
+        conditions.push(eq(engagements.financialYear, financialYear));
+      }
+      if (department) {
+        conditions.push(eq(engagements.department, department));
+      }
+      if (status) {
+        conditions.push(eq(engagements.status, status));
+      }
+
+      let query = db.select().from(engagements);
+      if (conditions.length > 0) {
+        query = query.where(and(...conditions)) as any;
+      }
+      
+      const allAudits = await query.orderBy(desc(engagements.createdAt));
+      res.json(allAudits);
+    } catch (e) {
+      next(e);
+    }
   });
 
-  // Start workflow for a specific audit
-  app.post("/api/audits/:id/start", (req, res) => {
-    const audit = db.audits.find(a => a.id === req.params.id);
-    if (!audit) return res.status(404).json({ error: "Not found" });
-    
-    // Asynchronous processing (simulating the AI departments)
-    processAuditWorkflow(audit);
-    
-    res.json({ message: "Started" });
+  app.get("/api/audits/:id", authenticate, async (req: any, res: any, next: any) => {
+    try {
+      const audit = await db.select().from(engagements).where(eq(engagements.id, req.params.id)).limit(1);
+      if (audit.length === 0) return res.status(404).json({ error: "Not found", message: "Audit not found" });
+      res.json(audit[0]);
+    } catch (e) {
+      next(e);
+    }
+  });
+
+  app.put("/api/audits/:id", authenticate, async (req: any, res: any, next: any) => {
+     try {
+       const updated = await db.update(engagements)
+         .set(req.body)
+         .where(eq(engagements.id, req.params.id))
+         .returning();
+       res.json(updated[0]);
+     } catch (e) {
+       next(e);
+     }
+  });
+  
+  app.delete("/api/audits/:id", authenticate, async (req: any, res: any, next: any) => {
+     try {
+       await db.delete(engagements).where(eq(engagements.id, req.params.id));
+       res.status(204).end();
+     } catch (e) {
+       next(e);
+     }
+  });
+
+  // Audit Universe Routes
+  app.post("/api/universe", authenticate, async (req: any, res: any, next: any) => {
+     try {
+       const { department, auditEntity, businessCriticality, auditFrequency, status } = req.body;
+       const newEntity = await db.insert(auditUniverse).values({
+         department,
+         auditEntity,
+         businessCriticality,
+         auditFrequency,
+         status,
+         ownerId: req.dbUser.id
+       }).returning();
+       res.status(201).json(newEntity[0]);
+     } catch (e) {
+       next(e);
+     }
+  });
+
+  app.get("/api/universe", authenticate, async (req: any, res: any, next: any) => {
+    try {
+      const { search, department, businessCriticality } = req.query;
+      let conditions = [];
+      
+      if (search) {
+        conditions.push(like(auditUniverse.auditEntity, `%${search}%`));
+      }
+      if (department) {
+        conditions.push(eq(auditUniverse.department, department));
+      }
+      if (businessCriticality) {
+        conditions.push(eq(auditUniverse.businessCriticality, businessCriticality));
+      }
+
+      let query = db.select().from(auditUniverse);
+      if (conditions.length > 0) {
+        query = query.where(and(...conditions)) as any;
+      }
+      
+      const universe = await query.orderBy(desc(auditUniverse.createdAt));
+      res.json(universe);
+    } catch (e) {
+      next(e);
+    }
+  });
+
+  app.put("/api/universe/:id", authenticate, async (req: any, res: any, next: any) => {
+     try {
+       const updated = await db.update(auditUniverse)
+         .set(req.body)
+         .where(eq(auditUniverse.id, req.params.id))
+         .returning();
+       res.json(updated[0]);
+     } catch (e) {
+       next(e);
+     }
+  });
+  
+  app.delete("/api/universe/:id", authenticate, async (req: any, res: any, next: any) => {
+     try {
+       await db.delete(auditUniverse).where(eq(auditUniverse.id, req.params.id));
+       res.status(204).end();
+     } catch (e) {
+       next(e);
+     }
+  });
+
+  // Global Error Handler
+  app.use((err: any, req: any, res: any, next: any) => {
+    console.error('Unhandled Error:', err);
+    res.status(err.status || 500).json({
+      error: 'Internal Server Error',
+      message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong',
+    });
   });
 
   // Vite middleware for development
@@ -80,114 +319,6 @@ async function startServer() {
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://0.0.0.0:${PORT}`);
   });
-}
-
-// Background worker simulation
-async function processAuditWorkflow(audit: any) {
-  const steps = [
-    { name: "Document Intelligence", duration: 4000, log: "Extracting transactions and metadata from Treasury Report..." },
-    { name: "Business Understanding", duration: 3500, log: "Identifying Treasury processes and applicable controls..." },
-    { name: "Audit Planning", duration: 3000, log: "Defining audit scope and required evidence..." },
-    { name: "Business Intelligence", duration: 4500, log: "Generating KPIs, variance analysis, and risk heatmaps..." },
-    { name: "Risk & Controls", duration: 4000, log: "Comparing evidence against RCM to detect failures..." },
-    { name: "Compliance", duration: 3500, log: "Validating against Company SOPs and Regulations..." },
-    { name: "Exception & Insight Engine", duration: 5000, log: "Detecting missing approvals, budget overruns, and deviations..." },
-    { name: "Executive Reporting", duration: 4000, log: "Preparing executive summary and management actions..." },
-  ];
-
-  audit.logs.push({ timestamp: new Date().toISOString(), message: "Audit session created. Documents classified." });
-
-  for (let i = 0; i < steps.length; i++) {
-    const step = steps[i];
-    audit.currentStep = step.name;
-    audit.logs.push({ timestamp: new Date().toISOString(), message: step.log });
-    
-    // Simulate processing time
-    await new Promise(resolve => setTimeout(resolve, step.duration));
-    
-    audit.progress = Math.round(((i + 1) / steps.length) * 100);
-  }
-
-  // Populate representative data
-  audit.status = "completed";
-  audit.currentStep = "Completed";
-  audit.logs.push({ timestamp: new Date().toISOString(), message: "Ready for Human Review." });
-  
-  audit.analytics = {
-    healthScore: 78,
-    aiConfidence: "94%",
-    timeSaved: "14 Days",
-    controlsTested: 42,
-    exceptionsFound: 14,
-    kpis: [
-      { label: "Total Transactions", value: "$4.2M", trend: "+12%", explanation: "Transaction volume increased compared to last quarter." },
-      { label: "Exceptions Found", value: "14", trend: "-2%", explanation: "Slight decrease in exceptions, but high severity." },
-      { label: "Control Effectiveness", value: "82%", trend: "+5%", explanation: "Improved compliance in expense approvals." },
-      { label: "Budget Variance", value: "$120K", trend: "over", explanation: "IT software expenditure exceeded projections." }
-    ],
-    monthlyTrend: [
-      { name: 'Jan', exceptions: 4, amount: 12000 },
-      { name: 'Feb', exceptions: 3, amount: 9000 },
-      { name: 'Mar', exceptions: 6, amount: 18000 },
-      { name: 'Apr', exceptions: 8, amount: 24000 },
-      { name: 'May', exceptions: 2, amount: 5000 },
-      { name: 'Jun', exceptions: 14, amount: 45000 },
-    ],
-    vendorDistribution: [
-      { name: 'TechCorp', value: 45 },
-      { name: 'OfficeSup', value: 20 },
-      { name: 'ConsultInc', value: 15 },
-      { name: 'Others', value: 20 },
-    ],
-    budgetVsActual: [
-      { category: 'Software', budget: 100, actual: 140 },
-      { category: 'Hardware', budget: 50, actual: 45 },
-      { category: 'Consulting', budget: 80, actual: 80 },
-      { category: 'Travel', budget: 20, actual: 35 },
-    ],
-    riskHeatmap: [
-      { category: "Vendor Payouts", risk: "High", score: 85 },
-      { category: "Payroll", risk: "Low", score: 20 },
-      { category: "Treasury Limits", risk: "Medium", score: 60 },
-      { category: "Expense Approvals", risk: "High", score: 90 },
-    ]
-  };
-
-  audit.findings = [
-    {
-      id: "f1",
-      title: "Duplicate Vendor Identified",
-      priority: "High",
-      confidence: "96%",
-      evidence: "GST Number, PAN Number, and Bank Account (ending 4432) match for vendors 'AlphaTech' and 'Alpha Technology'.",
-      reasoning: "Three vendors share identical banking information and tax identifiers, indicating duplicate records or potential fraud.",
-      impact: "High risk of duplicate payments and reporting inaccuracies.",
-      recommendation: "Merge duplicate vendor records and institute automated master data validation.",
-      status: "pending"
-    },
-    {
-      id: "f2",
-      title: "Weak Approval Control in Treasury Transfers",
-      priority: "High",
-      confidence: "94%",
-      evidence: "Transfer TR-9021 for $250,000 bypassed secondary authorization.",
-      reasoning: "The RCM requires dual approval for transactions > $100K. The provided general ledger shows single approval timestamp.",
-      impact: "High risk of unauthorized capital outflow and financial loss.",
-      recommendation: "Implement hard stop in ERP for single-approval transfers above threshold.",
-      status: "pending"
-    },
-    {
-      id: "f3",
-      title: "Vendor Concentration Risk",
-      priority: "Medium",
-      confidence: "88%",
-      evidence: "Vendor 'TechCorp Solutions' accounts for 45% of Q3 IT expenditure.",
-      reasoning: "Dependency analysis indicates high concentration. Policy threshold is 30% per vendor.",
-      impact: "Supply chain vulnerability if vendor operations cease.",
-      recommendation: "Diversify IT procurement. Initiate RFP for secondary suppliers.",
-      status: "pending"
-    }
-  ];
 }
 
 startServer();
