@@ -1,4 +1,4 @@
-import { StrictMode, useEffect } from 'react';
+import React, { StrictMode, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -6,10 +6,13 @@ import { Toaster } from 'sonner';
 
 import Dashboard from './pages/Dashboard';
 import CreateAudit from './pages/CreateAudit';
+import DocumentReviewWorkspace from './pages/DocumentReviewWorkspace';
+import ProcessingOrchestrator from './pages/ProcessingOrchestrator';
 import ReviewCenter from './pages/ReviewCenter';
 import Login from './pages/Login';
 import AuditUniverse from './pages/AuditUniverse';
 import AuditCalendar from './pages/AuditCalendar';
+import AuditWorkspace from './pages/AuditWorkspace';
 import EmptyFeature from './pages/EmptyFeature';
 import { useStore } from './store';
 import { ApiClient } from './lib/api';
@@ -64,7 +67,11 @@ function App() {
           <Route path="/" element={<ProtectedRoute><Navigate to="/dashboard" replace /></ProtectedRoute>} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/audit/new" element={<ProtectedRoute><CreateAudit /></ProtectedRoute>} />
-          <Route path="/audit/:id/review" element={<ProtectedRoute><ReviewCenter /></ProtectedRoute>} />
+          <Route path="/audit/:id/workspace" element={<ProtectedRoute><AuditWorkspace /></ProtectedRoute>} />
+          <Route path="/audit/:id/review" element={<ProtectedRoute><DocumentReviewWorkspace /></ProtectedRoute>} />
+          <Route path="/audit/:id/document-review" element={<ProtectedRoute><DocumentReviewWorkspace /></ProtectedRoute>} />
+          <Route path="/audit/:id/processing" element={<ProtectedRoute><ProcessingOrchestrator /></ProtectedRoute>} />
+          <Route path="/audit/:id/recommendation" element={<ProtectedRoute><Navigate to="/audit/:id/workspace" replace /></ProtectedRoute>} />
           <Route path="/audits/universe" element={<ProtectedRoute><AuditUniverse /></ProtectedRoute>} />
           <Route path="/audits/calendar" element={<ProtectedRoute><AuditCalendar /></ProtectedRoute>} />
           

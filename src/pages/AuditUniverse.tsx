@@ -4,7 +4,7 @@ import { PageLayout } from '@/src/components/layout/PageLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/card';
 import { Button } from '@/src/components/ui/button';
 import { Badge } from '@/src/components/ui/badge';
-import { Dialog, DialogHeader, DialogTitle, DialogDescription, DialogClose } from '@/src/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from '@/src/components/ui/dialog';
 import { Plus, Search, Filter, Pencil, Trash2, Loader2, Download } from 'lucide-react';
 import { ApiClient } from '@/src/lib/api';
 import { toast } from 'sonner';
@@ -17,7 +17,7 @@ const schema = z.object({
   auditEntity: z.string().min(1, "Audit entity is required"),
   businessCriticality: z.string().min(1, "Criticality is required"),
   auditFrequency: z.string().min(1, "Frequency is required"),
-  status: z.string().default('Active')
+  status: z.string().min(1, "Status is required")
 });
 
 type FormData = z.infer<typeof schema>;
@@ -45,7 +45,7 @@ export default function AuditUniverse() {
   
   const queryClient = useQueryClient();
 
-  const { data: universe = [], isLoading } = useQuery({
+  const { data: rawUniverse, isLoading } = useQuery({
     queryKey: ['universe', search, department],
     queryFn: async () => {
       const params: any = {};
@@ -54,6 +54,8 @@ export default function AuditUniverse() {
       return ApiClient.get('/universe', params);
     }
   });
+
+  const universe = Array.isArray(rawUniverse) ? rawUniverse : (rawUniverse as any)?.items || [];
 
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -223,11 +225,10 @@ export default function AuditUniverse() {
       </div>
 
       <Dialog open={isCreateOpen} onOpenChange={(v) => { setIsCreateOpen(v); if (!v) setEditingItem(null); }}>
-        
+        <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle>{editingItem ? 'Edit Audit Entity' : 'Add Audit Entity'}</DialogTitle>
             <DialogDescription>Define the attributes for this auditable entity in the universe.</DialogDescription>
-            <DialogClose />
           </DialogHeader>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-4">
              <div className="space-y-1">
@@ -317,7 +318,7 @@ export default function AuditUniverse() {
                 </Button>
               </div>
           </form>
-        
+        </DialogContent>
       </Dialog>
     </PageLayout>
   );

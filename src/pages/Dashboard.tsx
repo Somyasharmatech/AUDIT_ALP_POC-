@@ -15,7 +15,7 @@ export default function Dashboard() {
   const [financialYear, setFinancialYear] = useState('');
   const [department, setDepartment] = useState('');
 
-  const { data: audits = [], isLoading } = useQuery({
+  const { data: rawAudits, isLoading } = useQuery({
     queryKey: ['audits', search, financialYear, department],
     queryFn: () => {
       const params: any = {};
@@ -26,7 +26,9 @@ export default function Dashboard() {
     }
   });
 
-  const totalAudits = audits.length;
+  const audits = Array.isArray(rawAudits) ? rawAudits : (rawAudits as any)?.items || [];
+
+  const totalAudits = (rawAudits as any)?.total ?? audits.length;
   const completedPlanning = audits.filter((a: any) => a.status === 'Fieldwork' || a.status === 'Reporting' || a.status === 'Closed').length;
   const pendingPlanning = audits.filter((a: any) => a.status === 'Planning' || a.status === 'Not Started').length;
   const highRisk = audits.filter((a: any) => a.priority === 'High').length;
@@ -199,7 +201,7 @@ export default function Dashboard() {
                     ) : (
                       audits.map((audit: any) => (
                         <tr key={audit.id} className="hover:bg-[#F8F9FA] transition-colors">
-                          <td className="px-4 py-2.5 font-medium text-[#005A9E] cursor-pointer hover:underline" onClick={() => navigate(`/audit/${audit.id}/review`)}>
+                          <td className="px-4 py-2.5 font-medium text-[#005A9E] cursor-pointer hover:underline" onClick={() => navigate(`/audit/${audit.id}/workspace`)}>
                             {audit.name}
                           </td>
                           <td className="px-4 py-2.5 text-[#495057]">{audit.department}</td>
@@ -215,8 +217,8 @@ export default function Dashboard() {
                             </Badge>
                           </td>
                           <td className="px-4 py-2.5 text-right">
-                             <Button variant="ghost" size="icon" onClick={() => navigate(`/audit/${audit.id}/review`)} className="h-6 w-6 text-[#6C757D] hover:bg-[#E5F0FA]">
-                               <ChevronRight className="h-4 w-4" />
+                             <Button variant="ghost" size="sm" onClick={() => navigate(`/audit/${audit.id}/workspace`)} className="h-7 text-xs text-[#005A9E] hover:bg-[#E5F0FA] font-medium gap-1 px-2">
+                               Workspace <ChevronRight className="h-3.5 w-3.5" />
                              </Button>
                           </td>
                         </tr>

@@ -1,3 +1,38 @@
+export interface KnowledgeSourceFile {
+  id: string;
+  name: string;
+  size: string;
+  type: string;
+  uploadedAt: string;
+  status: 'uploaded' | 'uploading' | 'processing';
+  contentSummary?: string;
+}
+
+export interface KnowledgeSourcesMap {
+  previousAuditReports?: KnowledgeSourceFile[];
+  currentYearDocuments?: KnowledgeSourceFile[];
+  balanceSheet?: KnowledgeSourceFile[];
+  sop?: KnowledgeSourceFile[];
+  riskRegister?: KnowledgeSourceFile[];
+  fraudRegister?: KnowledgeSourceFile[];
+  regulatoryReview?: KnowledgeSourceFile[];
+  rcm?: KnowledgeSourceFile[];
+}
+
+export interface PlanningQuestionnaire {
+  penaltiesOrFines: 'Yes' | 'No';
+  fraudReported: 'Yes' | 'No';
+  highRiskObservations: 'Yes' | 'No';
+}
+
+export interface CreateAuditPlanningPayload {
+  financialYear: '2028-29' | '2027-28' | '2026-27' | '2025-26';
+  auditType: 'Operational Audit' | 'Financial Audit' | 'Compliance Audit' | 'Information Technology Audit' | 'Strategic Audit';
+  department: 'Finance & Treasury' | 'Information Technology' | 'Human Resources' | 'Operations' | 'Legal & Compliance';
+  knowledgeSources: KnowledgeSourcesMap;
+  questionnaire: PlanningQuestionnaire;
+}
+
 export interface Audit {
   id: string;
   name: string;

@@ -6,17 +6,24 @@ import { cn } from "@/src/lib/utils"
 const Dialog = ({ open, onOpenChange, children }: { open: boolean; onOpenChange: (open: boolean) => void; children: React.ReactNode }) => {
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div 
         className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
         onClick={() => onOpenChange(false)}
       />
-      <div className="z-50 grid w-full max-w-lg gap-4 bg-white p-6 shadow-lg sm:rounded-sm border border-[#DEE2E6] animate-in fade-in-90 zoom-in-95">
-        {children}
-      </div>
+      {children}
     </div>
   )
 }
+
+const DialogContent = ({ children, className }: { children: React.ReactNode; className?: string }) => (
+  <div className={cn(
+    "z-50 grid w-full max-w-lg gap-4 bg-white p-6 shadow-lg sm:rounded-sm border border-[#DEE2E6] animate-in fade-in-90 zoom-in-95 relative",
+    className
+  )}>
+    {children}
+  </div>
+)
 
 const DialogHeader = ({
   className,
@@ -71,4 +78,4 @@ const DialogClose = ({ onClick, className }: { onClick?: () => void; className?:
   </button>
 )
 
-export { Dialog, DialogHeader, DialogTitle, DialogDescription, DialogClose }
+export { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose }

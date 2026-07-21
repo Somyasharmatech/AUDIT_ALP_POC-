@@ -75,14 +75,19 @@ export default function ReviewCenter() {
                 <Layers className="h-6 w-6 text-[#005A9E]" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-[#212529] mb-1">Workspace Foundation</h3>
+                <h3 className="text-lg font-semibold text-[#212529] mb-1">Audit Planning Workspace</h3>
                 <p className="text-[13px] text-[#6C757D] mb-4">
-                  The infrastructure for this audit workspace is provisioned. Business logic, document processing, and planning tools will be integrated in future sprints.
+                  Open the full functional Audit Planning Workspace for document reviews, questionnaire persistence, risk matrices, and approval sign-off.
                 </p>
               </div>
-              <Button onClick={() => navigate('/dashboard')} className="w-full bg-[#005A9E] hover:bg-[#004578]">
-                Return to Dashboard
-              </Button>
+              <div className="flex gap-3 w-full">
+                <Button variant="outline" onClick={() => navigate(`/audit/${audit.id}/review`)} className="flex-1 border-[#005A9E] text-[#005A9E]">
+                  Document Review
+                </Button>
+                <Button onClick={() => navigate(`/audit/${audit.id}/workspace`)} className="flex-1 bg-[#005A9E] hover:bg-[#004578]">
+                  Open Workspace
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>
