@@ -42,9 +42,14 @@ function App() {
       const token = localStorage.getItem('token');
       if (token) {
         try {
-          const user = await ApiClient.get('/auth/me');
-          setUser(user);
+          const result = await ApiClient.get('/auth/me');
+          if (result && result.user) {
+            setUser(result.user);
+          } else {
+            throw new Error('Invalid user data received');
+          }
         } catch (e) {
+          console.error("Auth Initialization Error:", e);
           localStorage.removeItem('token');
           setUser(null);
         }

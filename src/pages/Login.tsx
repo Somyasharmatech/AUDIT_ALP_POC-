@@ -38,18 +38,26 @@ export default function Login() {
         body: JSON.stringify(data)
       });
       
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        const text = await response.text();
+        console.error("Non-JSON response received:", text);
+        throw new Error("Server returned an unexpected format. Please check backend status.");
+      }
+
+      const result = await response.json();
+      
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Authentication failed');
+        throw new Error(result.message || 'Authentication failed');
       }
       
-      const result = await response.json();
       localStorage.setItem('token', result.token);
       setUser(result.user);
       setAuthInitialized(true);
       toast.success("Signed in successfully");
       navigate('/dashboard');
     } catch (err: any) {
+      console.error("Login Error:", err);
       toast.error(err.message || 'Authentication failed');
     } finally {
       setIsLoading(false);

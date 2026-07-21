@@ -161,24 +161,39 @@ async function startServer() {
 
   // Auth Routes
   app.post('/api/auth/login', async (req: any, res: any, next: any) => {
+    console.log(`[AUTH] Login attempt for email: ${req.body?.email}`);
     try {
       const { email, password } = req.body;
+      if (!email || !password) {
+        return res.status(400).json({ success: false, message: 'Email and password are required' });
+      }
+
       const userList = await db.select().from(users).where(eq(users.email, email)).limit(1);
       if (userList.length === 0) {
-        return res.status(401).json({ message: 'Invalid credentials' });
+        console.log(`[AUTH] Login failed: User not found (${email})`);
+        return res.status(401).json({ success: false, message: 'Invalid credentials' });
       }
+
       const user = userList[0];
       const isMatch = await bcrypt.compare(password, user.passwordHash);
       if (!isMatch) {
-        return res.status(401).json({ message: 'Invalid credentials' });
+        console.log(`[AUTH] Login failed: Password mismatch for ${email}`);
+        return res.status(401).json({ success: false, message: 'Invalid credentials' });
       }
+
       const payload = { id: user.id, email: user.email, role: user.role, name: user.name };
       const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1d' });
 
       await logAuditAction(user.id, user.name, 'LOGIN', 'User', user.id, `User logged in: ${user.email}`, req.ip);
 
-      res.json({ token, user: { id: user.id, email: user.email, name: user.name, role: user.role } });
+      console.log(`[AUTH] Login successful for ${email}`);
+      res.json({ 
+        success: true,
+        token, 
+        user: { id: user.id, email: user.email, name: user.name, role: user.role } 
+      });
     } catch (e) {
+      console.error('[AUTH] Login error:', e);
       next(e);
     }
   });
@@ -186,9 +201,13 @@ async function startServer() {
   app.post('/api/auth/register', async (req: any, res: any, next: any) => {
     try {
       const { email, password, name, role } = req.body;
+      if (!email || !password) {
+        return res.status(400).json({ success: false, message: 'Email and password are required' });
+      }
+
       const userList = await db.select().from(users).where(eq(users.email, email)).limit(1);
       if (userList.length > 0) {
-        return res.status(400).json({ message: 'User already exists' });
+        return res.status(400).json({ success: false, message: 'User already exists' });
       }
       const salt = await bcrypt.genSalt(10);
       const hash = await bcrypt.hash(password, salt);
@@ -198,21 +217,30 @@ async function startServer() {
         name: name || email.split('@')[0],
         role: role || 'Auditor'
       }).returning();
+      
       const user = newUser[0];
       const payload = { id: user.id, email: user.email, role: user.role, name: user.name };
       const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1d' });
 
       await logAuditAction(user.id, user.name, 'REGISTER', 'User', user.id, `New user registered: ${user.email}`, req.ip);
 
-      res.json({ token, user: { id: user.id, email: user.email, name: user.name, role: user.role } });
-    } catch(e) {
+      res.status(201).json({ 
+        success: true,
+        token, 
+        user: { id: user.id, email: user.email, name: user.name, role: user.role } 
+      });
+    } catch (e) {
+      console.error('[AUTH] Registration error:', e);
       next(e);
     }
   });
 
   app.get('/api/auth/me', authenticate, (req: any, res: any) => {
     const u = req.dbUser;
-    res.json({ id: u.id, email: u.email, name: u.name, role: u.role });
+    res.json({ 
+      success: true,
+      user: { id: u.id, email: u.email, name: u.name, role: u.role } 
+    });
   });
   
   app.get('/api/users', authenticate, async (req: any, res: any, next: any) => {
@@ -1847,15 +1875,6 @@ async function startServer() {
     }
   });
 
-  // Global Error Handler
-  app.use((err: any, req: any, res: any, next: any) => {
-    console.error('Unhandled Server Error:', err);
-    res.status(err.status || 500).json({
-      error: 'Internal Server Error',
-      message: err.message || 'An unexpected error occurred'
-    });
-  });
-
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
@@ -1865,15 +1884,34 @@ async function startServer() {
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
-    });
+    if (fs.existsSync(distPath)) {
+      app.use(express.static(distPath));
+      app.get('*', (req, res) => {
+        res.sendFile(path.join(distPath, 'index.html'));
+      });
+    } else {
+      console.warn('Production dist folder not found. Serving as API only.');
+      app.get('*', (req, res) => {
+        res.status(404).json({ success: false, message: 'Resource not found' });
+      });
+    }
   }
+
+  // Global Error Handler - Move to the VERY end
+  app.use((err: any, req: any, res: any, next: any) => {
+    console.error('Unhandled Server Error:', err);
+    res.status(err.status || 500).json({
+      success: false,
+      error: 'Internal Server Error',
+      message: err.message || 'An unexpected error occurred'
+    });
+  });
 
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://0.0.0.0:${PORT}`);
   });
 }
 
-startServer();
+startServer().catch(err => {
+  console.error("CRITICAL: Server failed to start:", err);
+});
