@@ -23,6 +23,7 @@ import { EnterpriseAnalytics } from '@/src/components/workspace/EnterpriseAnalyt
 import { PlanningMemorandum } from '@/src/components/workspace/PlanningMemorandum';
 import { ScopingDocument } from '@/src/components/workspace/ScopingDocument';
 import { AuditProgram } from '@/src/components/workspace/AuditProgram';
+import { FinalReviewPackage } from '@/src/components/workspace/FinalReviewPackage';
 
 type Phase = 'upload' | 'processing' | 'results';
 type Document = { 
@@ -154,6 +155,7 @@ export default function AuditWorkspace() {
                   { id: 'planning-memo', label: 'Planning Memorandum', icon: FileText },
                   { id: 'scoping-document', label: 'Scoping Document', icon: Target },
                   { id: 'audit-program', label: 'Audit Program', icon: ListChecks },
+                  { id: 'final-review', label: 'Final Review & Package', icon: CheckCircle2 },
                 ].map(item => (
                   <button
                     key={item.id}
@@ -331,6 +333,7 @@ export default function AuditWorkspace() {
                   {activeTab === 'planning-memo' && <PlanningMemorandum />}
                   {activeTab === 'scoping-document' && <ScopingDocument />}
                   {activeTab === 'audit-program' && <AuditProgram />}
+                  {activeTab === 'final-review' && <FinalReviewPackage />}
                 </div>
               )}
 
