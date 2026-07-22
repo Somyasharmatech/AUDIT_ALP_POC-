@@ -87,6 +87,12 @@ export default function AuditWorkspace() {
 
   const [phase, setPhase] = useState<Phase>('upload');
   const [documents, setDocuments] = useState<Document[]>(REQUIRED_DOCUMENTS);
+
+  // User provided inputs (Step 1)
+  const [financialYear, setFinancialYear] = useState('2025-26');
+  const [department, setDepartment] = useState('Procurement & Treasury');
+  const [auditType, setAuditType] = useState('Financial & Operational ICFR Audit');
+  const [autoAuditName, setAutoAuditName] = useState('Procure to Pay (P2P) Automation & Control Review FY25');
   
   // Processing state
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
@@ -211,8 +217,75 @@ export default function AuditWorkspace() {
               
               {/* PHASE: UPLOAD */}
               {phase === 'upload' && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-20">
-                  {documents.map(doc => (
+                <div className="space-y-6 pb-20">
+                  {/* STEP 1: USER INPUTS & AUTO-EXTRACTED AUDIT NAME */}
+                  <Card className="shadow-sm border-[#005A9E] bg-white">
+                    <CardHeader className="p-4 border-b border-[#DEE2E6] bg-[#E5F0FA]/50 flex flex-row items-center justify-between">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <Badge className="bg-[#005A9E] text-white text-[10px] uppercase font-bold">Step 1 — Scope Parameters</Badge>
+                          <span className="text-xs text-[#005A9E] font-semibold">User Defined Parameters & Auto-Extracted Name</span>
+                        </div>
+                        <CardTitle className="text-base font-bold text-[#212529] mt-1">Audit Engagement Scope Configuration</CardTitle>
+                      </div>
+                      <Badge variant="outline" className="border-[#198754] text-[#198754] bg-[#F0FDF4] text-[10px] font-bold">
+                        <Sparkles className="h-3 w-3 mr-1" /> Audit Name Auto-Extracted
+                      </Badge>
+                    </CardHeader>
+                    <CardContent className="p-5 space-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                          <label className="text-[11px] font-bold text-[#6C757D] uppercase block mb-1">Financial Year</label>
+                          <input 
+                            type="text" 
+                            value={financialYear} 
+                            onChange={(e) => setFinancialYear(e.target.value)} 
+                            className="w-full text-xs p-2 border border-[#DEE2E6] rounded font-semibold text-[#212529] focus:outline-none focus:border-[#005A9E]" 
+                            placeholder="e.g. 2025-26"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[11px] font-bold text-[#6C757D] uppercase block mb-1">Department Scope</label>
+                          <input 
+                            type="text" 
+                            value={department} 
+                            onChange={(e) => setDepartment(e.target.value)} 
+                            className="w-full text-xs p-2 border border-[#DEE2E6] rounded font-semibold text-[#212529] focus:outline-none focus:border-[#005A9E]" 
+                            placeholder="e.g. Procurement & Treasury"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[11px] font-bold text-[#6C757D] uppercase block mb-1">Audit Type</label>
+                          <input 
+                            type="text" 
+                            value={auditType} 
+                            onChange={(e) => setAuditType(e.target.value)} 
+                            className="w-full text-xs p-2 border border-[#DEE2E6] rounded font-semibold text-[#212529] focus:outline-none focus:border-[#005A9E]" 
+                            placeholder="e.g. Financial & Operational ICFR"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="p-3 bg-[#F8F9FA] border border-[#DEE2E6] rounded flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                          <FileText className="h-4 w-4 text-[#005A9E] shrink-0" />
+                          <div>
+                            <span className="text-[10px] text-[#6C757D] font-bold uppercase block">Auto-Extracted Engagement Name (From Previous Audit Report)</span>
+                            <span className="text-sm font-black text-[#005A9E]">{autoAuditName}</span>
+                          </div>
+                        </div>
+                        <Badge className="bg-[#198754] text-white text-[10px] shrink-0">100% Parsed from Doc #1</Badge>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* UPLOAD DOCUMENT MATRIX */}
+                  <div className="space-y-2">
+                    <h3 className="text-xs font-bold text-[#005A9E] uppercase tracking-wider flex items-center gap-2 border-b border-[#DEE2E6] pb-2">
+                      <Upload className="h-4 w-4 text-[#005A9E]" /> Required Foundational Enterprise Documents (13 Sources)
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {documents.map(doc => (
                     <Card key={doc.id} className="shadow-sm border-[#DEE2E6]">
                       <CardHeader className="p-4 pb-2 flex flex-row items-center justify-between border-b border-[#DEE2E6] bg-[#F8F9FA]/50">
                         <CardTitle className="text-sm font-semibold text-[#212529] line-clamp-1 flex-1 pr-2">{doc.name}</CardTitle>
@@ -270,7 +343,9 @@ export default function AuditWorkspace() {
                     </Card>
                   ))}
                 </div>
-              )}
+              </div>
+            </div>
+          )}
 
               {/* PHASE: PROCESSING */}
               {phase === 'processing' && (

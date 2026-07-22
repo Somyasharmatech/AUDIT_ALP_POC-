@@ -7,6 +7,7 @@ import {
   TrendingUp, History, DollarSign, ListChecks, ArrowRight, Clock, Sparkles, ShieldCheck
 } from 'lucide-react';
 import { AIReasoningSection } from './AIReasoningSection';
+import { AIFinalDecisionEngine } from './AIFinalDecisionEngine';
 
 const CircularGauge = ({ value, label, color }: { value: number, label: string, color: string }) => {
   const radius = 35;
@@ -48,6 +49,9 @@ export function ExecutiveSummary() {
         </div>
         <Badge variant="outline" className="border-[#005A9E] text-[#005A9E] bg-[#E5F0FA]">AI Generated Briefing</Badge>
       </div>
+
+      {/* TOP: AI FINAL DECISION ENGINE */}
+      <AIFinalDecisionEngine />
 
       {/* 0. MANAGEMENT HEALTH DASHBOARD */}
       <Card className="shadow-sm border-[#DEE2E6] bg-[#F8F9FA]">

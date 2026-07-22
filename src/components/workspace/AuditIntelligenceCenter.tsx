@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 import { toast } from 'sonner';
+import { AIFinalDecisionEngine } from './AIFinalDecisionEngine';
 
 interface AuditIntelligenceCenterProps {
   onSelectTab?: (tabId: string) => void;
@@ -64,6 +65,9 @@ export function AuditIntelligenceCenter({ onSelectTab }: AuditIntelligenceCenter
           </Button>
         </div>
       </div>
+
+      {/* SECTION 0: AI FINAL DECISION ENGINE */}
+      <AIFinalDecisionEngine />
 
       {/* SECTION 1: ENGAGEMENT SNAPSHOT */}
       <div className="space-y-3">
