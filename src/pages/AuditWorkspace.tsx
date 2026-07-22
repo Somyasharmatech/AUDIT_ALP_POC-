@@ -20,6 +20,9 @@ import { HistoricalAnalysis } from '@/src/components/workspace/HistoricalAnalysi
 import { FinancialAnalysis } from '@/src/components/workspace/FinancialAnalysis';
 import { RiskAssessment } from '@/src/components/workspace/RiskAssessment';
 import { EnterpriseAnalytics } from '@/src/components/workspace/EnterpriseAnalytics';
+import { PlanningMemorandum } from '@/src/components/workspace/PlanningMemorandum';
+import { ScopingDocument } from '@/src/components/workspace/ScopingDocument';
+import { AuditProgram } from '@/src/components/workspace/AuditProgram';
 
 type Phase = 'upload' | 'processing' | 'results';
 type Document = { 
@@ -127,26 +130,6 @@ export default function AuditWorkspace() {
       };
     }
   }, [phase]);
-
-  // Sub-components for Results
-  const renderPlaceholderTab = (title: string) => (
-    <div className="space-y-6">
-      <h2 className="text-xl font-semibold text-[#212529]">{title}</h2>
-      <Card className="shadow-sm border-[#DEE2E6]">
-        <CardContent className="p-12 flex flex-col items-center justify-center text-center space-y-4">
-           <FileCheck className="h-12 w-12 text-[#005A9E] opacity-20" />
-           <div>
-             <h3 className="text-lg font-medium text-[#212529]">AI Generated {title}</h3>
-             <p className="text-sm text-[#6C757D] max-w-md mt-1">This document has been fully drafted by the AI based on the provided required documents and historical analysis.</p>
-           </div>
-           <div className="flex items-center gap-3 mt-4">
-             <Button variant="outline" className="border-[#005A9E] text-[#005A9E] hover:bg-[#E5F0FA]">Export Word</Button>
-             <Button className="bg-[#005A9E] hover:bg-[#004578]">Export PDF</Button>
-           </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
 
   return (
     <PageLayout>
@@ -345,9 +328,9 @@ export default function AuditWorkspace() {
                   {activeTab === 'financial' && <FinancialAnalysis />}
                   {activeTab === 'risk-assessment' && <RiskAssessment />}
                   {activeTab === 'analytics' && <EnterpriseAnalytics />}
-                  {activeTab === 'planning-memo' && renderPlaceholderTab('Planning Memorandum')}
-                  {activeTab === 'scoping-document' && renderPlaceholderTab('Scoping Document')}
-                  {activeTab === 'audit-program' && renderPlaceholderTab('Audit Program')}
+                  {activeTab === 'planning-memo' && <PlanningMemorandum />}
+                  {activeTab === 'scoping-document' && <ScopingDocument />}
+                  {activeTab === 'audit-program' && <AuditProgram />}
                 </div>
               )}
 
