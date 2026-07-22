@@ -1,17 +1,9 @@
 import React from 'react';
-import { Search, Bell, Settings, LogOut, User } from 'lucide-react';
+import { Search, Bell, Settings, User } from 'lucide-react';
 import { useStore } from '@/src/store';
-import { useNavigate } from 'react-router-dom';
 
 export function TopNavigation() {
-  const { user, setUser } = useStore();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    setUser(null);
-    navigate('/login');
-  };
+  const { user } = useStore();
 
   return (
     <header className="h-14 bg-white border-b border-[#DEE2E6] flex items-center justify-between px-6 flex-shrink-0">
@@ -43,9 +35,6 @@ export function TopNavigation() {
           <div className="h-8 w-8 bg-[#E5F0FA] text-[#005A9E] rounded-full flex items-center justify-center border border-[#005A9E]/20">
             <User className="h-4 w-4" />
           </div>
-          <button onClick={handleLogout} className="text-[#6C757D] hover:text-[#DC3545] transition-colors ml-2">
-            <LogOut className="h-4 w-4" />
-          </button>
         </div>
       </div>
     </header>

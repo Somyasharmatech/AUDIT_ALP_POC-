@@ -8,7 +8,6 @@ import helmet from 'helmet';
 import cors from 'cors';
 import morgan from 'morgan';
 import multer from 'multer';
-import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { db, initDb } from './src/db/index.js';
 import { 
@@ -42,7 +41,6 @@ import {
   aiObservability
 } from './server/ai/index.js';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-enterprise-key-2026';
 
 // Setup File Upload Storage
 const uploadsDir = path.join(process.cwd(), 'uploads');
@@ -100,30 +98,6 @@ async function logAuditAction(
   }
 }
 
-// Auth Middleware
-async function authenticate(req: any, res: any, next: any) {
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'Unauthorized', message: 'Missing or invalid token' });
-  }
-  const token = authHeader.split('Bearer ')[1];
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET) as any;
-    req.user = decoded;
-    
-    const existingUser = await db.select().from(users).where(eq(users.id, decoded.id)).limit(1);
-    if (existingUser.length === 0) {
-       console.log(`[AUTH] User not found in database: ${decoded.id}`);
-       return res.status(401).json({ error: 'Unauthorized', message: 'User not found' });
-    }
-    req.dbUser = existingUser[0];
-    next();
-  } catch (error) {
-    console.error(`[AUTH] Token verification failed:`, error instanceof Error ? error.message : error);
-    return res.status(401).json({ error: 'Unauthorized', message: 'Token verification failed' });
-  }
-}
-
 async function startServer() {
   console.log(`[STARTUP] Initial Memory: ${Math.round(process.memoryUsage().rss / 1024 / 1024)}MB`);
   await initDb();
@@ -157,7 +131,7 @@ async function startServer() {
   }
 
   const app = express();
-  const PORT = Number(process.env.PORT) || 3000;
+  const PORT = 3000;
   
   app.use(helmet({ contentSecurityPolicy: false }));
   app.use(cors());
@@ -174,91 +148,25 @@ async function startServer() {
     });
   });
 
-  // Auth Routes
-  app.post('/api/auth/login', async (req: any, res: any, next: any) => {
-    console.log(`[AUTH] Login attempt for email: ${req.body?.email}`);
+  // Mock Auth Middleware for all /api routes
+  app.use('/api', async (req: any, res: any, next: any) => {
+    // Demo Mode: Mock User Injection
+    req.user = { id: 'demo-user-id', email: 'demo@auditalp.com', name: 'Demo Audit Manager', role: 'Head of Internal Audit' };
     try {
-      const { email, password } = req.body;
-      if (!email || !password) {
-        return res.status(400).json({ success: false, message: 'Email and password are required' });
+      const existingUser = await db.select().from(users).where(eq(users.email, 'admin@auditalp.com')).limit(1);
+      if (existingUser.length > 0) {
+        req.dbUser = existingUser[0];
+        req.user.id = existingUser[0].id;
+      } else {
+        req.dbUser = req.user;
       }
-
-      const userList = await db.select().from(users).where(eq(users.email, email)).limit(1);
-      if (userList.length === 0) {
-        console.log(`[AUTH] Login failed: User not found (${email})`);
-        return res.status(401).json({ success: false, message: 'Invalid credentials' });
-      }
-
-      const user = userList[0];
-      const isMatch = await bcrypt.compare(password, user.passwordHash);
-      if (!isMatch) {
-        console.log(`[AUTH] Login failed: Password mismatch for ${email}`);
-        return res.status(401).json({ success: false, message: 'Invalid credentials' });
-      }
-
-      const payload = { id: user.id, email: user.email, role: user.role, name: user.name };
-      const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1d' });
-
-      await logAuditAction(user.id, user.name, 'LOGIN', 'User', user.id, `User logged in: ${user.email}`, req.ip);
-
-      console.log(`[AUTH] Login successful for ${email}`);
-      res.json({ 
-        success: true,
-        token, 
-        user: { id: user.id, email: user.email, name: user.name, role: user.role } 
-      });
     } catch (e) {
-      console.error('[AUTH] Login error:', e);
-      next(e);
+      req.dbUser = req.user;
     }
+    next();
   });
   
-  app.post('/api/auth/register', async (req: any, res: any, next: any) => {
-    try {
-      const { email, password, name, role } = req.body;
-      if (!email || !password) {
-        return res.status(400).json({ success: false, message: 'Email and password are required' });
-      }
-
-      const userList = await db.select().from(users).where(eq(users.email, email)).limit(1);
-      if (userList.length > 0) {
-        return res.status(400).json({ success: false, message: 'User already exists' });
-      }
-      const salt = await bcrypt.genSalt(10);
-      const hash = await bcrypt.hash(password, salt);
-      const newUser = await db.insert(users).values({
-        email,
-        passwordHash: hash,
-        name: name || email.split('@')[0],
-        role: role || 'Auditor'
-      }).returning();
-      
-      const user = newUser[0];
-      const payload = { id: user.id, email: user.email, role: user.role, name: user.name };
-      const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1d' });
-
-      await logAuditAction(user.id, user.name, 'REGISTER', 'User', user.id, `New user registered: ${user.email}`, req.ip);
-
-      res.status(201).json({ 
-        success: true,
-        token, 
-        user: { id: user.id, email: user.email, name: user.name, role: user.role } 
-      });
-    } catch (e) {
-      console.error('[AUTH] Registration error:', e);
-      next(e);
-    }
-  });
-
-  app.get('/api/auth/me', authenticate, (req: any, res: any) => {
-    const u = req.dbUser;
-    res.json({ 
-      success: true,
-      user: { id: u.id, email: u.email, name: u.name, role: u.role } 
-    });
-  });
-  
-  app.get('/api/users', authenticate, async (req: any, res: any, next: any) => {
+  app.get('/api/users', async (req: any, res: any, next: any) => {
      try {
        const allUsers = await db.select({ id: users.id, name: users.name, email: users.email, role: users.role }).from(users);
        res.json(allUsers);
@@ -271,7 +179,7 @@ async function startServer() {
   // 1. ANNUAL AUDIT PLAN (ENGAGEMENTS) - CRUD, Archive, Search, Filter, Pagination
   // ==========================================
   
-  app.get("/api/audits", authenticate, async (req: any, res: any, next: any) => {
+  app.get("/api/audits", async (req: any, res: any, next: any) => {
     try {
       const { search, financialYear, department, status, isArchived, page = '1', limit = '10' } = req.query;
       const pageNum = Math.max(1, parseInt(page as string, 10) || 1);
@@ -328,7 +236,7 @@ async function startServer() {
     }
   });
 
-  app.post("/api/audits", authenticate, async (req: any, res: any, next: any) => {
+  app.post("/api/audits", async (req: any, res: any, next: any) => {
     try {
       const {
         financialYear,
@@ -423,7 +331,7 @@ async function startServer() {
     }
   });
 
-  app.get("/api/audits/:id", authenticate, async (req: any, res: any, next: any) => {
+  app.get("/api/audits/:id", async (req: any, res: any, next: any) => {
     try {
       const audit = await db.select().from(engagements).where(eq(engagements.id, req.params.id)).limit(1);
       if (audit.length === 0) return res.status(404).json({ error: "Not found", message: "Audit engagement not found" });
@@ -433,7 +341,7 @@ async function startServer() {
     }
   });
 
-  app.put("/api/audits/:id", authenticate, async (req: any, res: any, next: any) => {
+  app.put("/api/audits/:id", async (req: any, res: any, next: any) => {
      try {
        const { id } = req.params;
        const updateData = {
@@ -466,7 +374,7 @@ async function startServer() {
      }
   });
 
-  app.put("/api/audits/:id/archive", authenticate, async (req: any, res: any, next: any) => {
+  app.put("/api/audits/:id/archive", async (req: any, res: any, next: any) => {
     try {
       const { id } = req.params;
       const updated = await db.update(engagements)
@@ -492,7 +400,7 @@ async function startServer() {
     }
   });
 
-  app.put("/api/audits/:id/restore", authenticate, async (req: any, res: any, next: any) => {
+  app.put("/api/audits/:id/restore", async (req: any, res: any, next: any) => {
     try {
       const { id } = req.params;
       const updated = await db.update(engagements)
@@ -518,7 +426,7 @@ async function startServer() {
     }
   });
 
-  app.delete("/api/audits/:id", authenticate, async (req: any, res: any, next: any) => {
+  app.delete("/api/audits/:id", async (req: any, res: any, next: any) => {
      try {
        const { id } = req.params;
        const deleted = await db.delete(engagements).where(eq(engagements.id, id)).returning();
@@ -543,7 +451,7 @@ async function startServer() {
   // 2. AUDIT UNIVERSE - CRUD, Archive, Relationships, Search, Filter, Pagination
   // ==========================================
 
-  app.get("/api/universe", authenticate, async (req: any, res: any, next: any) => {
+  app.get("/api/universe", async (req: any, res: any, next: any) => {
     try {
       const { search, department, businessCriticality, auditFrequency, isArchived, page = '1', limit = '10' } = req.query;
       const pageNum = Math.max(1, parseInt(page as string, 10) || 1);
@@ -600,7 +508,7 @@ async function startServer() {
     }
   });
 
-  app.post("/api/universe", authenticate, async (req: any, res: any, next: any) => {
+  app.post("/api/universe", async (req: any, res: any, next: any) => {
      try {
        const { department, auditEntity, businessUnit, auditType, businessCriticality = 'Medium', auditFrequency = 'Annual', status = 'Active', description } = req.body;
        
@@ -636,7 +544,7 @@ async function startServer() {
      }
   });
 
-  app.get("/api/universe/:id", authenticate, async (req: any, res: any, next: any) => {
+  app.get("/api/universe/:id", async (req: any, res: any, next: any) => {
     try {
       const entity = await db.select().from(auditUniverse).where(eq(auditUniverse.id, req.params.id)).limit(1);
       if (entity.length === 0) return res.status(404).json({ message: "Universe entity not found" });
@@ -655,7 +563,7 @@ async function startServer() {
     }
   });
 
-  app.put("/api/universe/:id", authenticate, async (req: any, res: any, next: any) => {
+  app.put("/api/universe/:id", async (req: any, res: any, next: any) => {
      try {
        const updated = await db.update(auditUniverse)
          .set({ ...req.body, updatedAt: new Date() })
@@ -680,7 +588,7 @@ async function startServer() {
      }
   });
 
-  app.put("/api/universe/:id/archive", authenticate, async (req: any, res: any, next: any) => {
+  app.put("/api/universe/:id/archive", async (req: any, res: any, next: any) => {
     try {
       const updated = await db.update(auditUniverse)
         .set({ isArchived: true, status: 'Archived', updatedAt: new Date() })
@@ -705,7 +613,7 @@ async function startServer() {
     }
   });
 
-  app.put("/api/universe/:id/restore", authenticate, async (req: any, res: any, next: any) => {
+  app.put("/api/universe/:id/restore", async (req: any, res: any, next: any) => {
     try {
       const updated = await db.update(auditUniverse)
         .set({ isArchived: false, status: 'Active', updatedAt: new Date() })
@@ -730,7 +638,7 @@ async function startServer() {
     }
   });
 
-  app.delete("/api/universe/:id", authenticate, async (req: any, res: any, next: any) => {
+  app.delete("/api/universe/:id", async (req: any, res: any, next: any) => {
      try {
        const deleted = await db.delete(auditUniverse).where(eq(auditUniverse.id, req.params.id)).returning();
        
@@ -754,7 +662,7 @@ async function startServer() {
   // 3. DOCUMENT MANAGEMENT - Upload, Metadata, Versioning, Replacement, Delete, Stream Preview
   // ==========================================
 
-  app.post("/api/documents/upload", authenticate, (req: any, res: any, next: any) => {
+  app.post("/api/documents/upload", (req: any, res: any, next: any) => {
     uploadDisk.single('file')(req, res, async (err: any) => {
       if (err) {
         return res.status(400).json({ error: "Upload Error", message: err.message });
@@ -814,7 +722,7 @@ async function startServer() {
     });
   });
 
-  app.get("/api/documents", authenticate, async (req: any, res: any, next: any) => {
+  app.get("/api/documents", async (req: any, res: any, next: any) => {
     try {
       const { engagementId, universeId, category, status = 'Active' } = req.query;
       let conditions: any[] = [];
@@ -841,7 +749,7 @@ async function startServer() {
     }
   });
 
-  app.get("/api/documents/:id/file", authenticate, async (req: any, res: any, next: any) => {
+  app.get("/api/documents/:id/file", async (req: any, res: any, next: any) => {
     try {
       const docList = await db.select().from(documents).where(eq(documents.id, req.params.id)).limit(1);
       if (docList.length === 0) return res.status(404).json({ message: "Document not found" });
@@ -859,7 +767,7 @@ async function startServer() {
     }
   });
 
-  app.post("/api/documents/:id/version", authenticate, (req: any, res: any, next: any) => {
+  app.post("/api/documents/:id/version", (req: any, res: any, next: any) => {
     uploadDisk.single('file')(req, res, async (err: any) => {
       if (err) return res.status(400).json({ message: err.message });
       try {
@@ -912,7 +820,7 @@ async function startServer() {
     });
   });
 
-  app.get("/api/documents/:id/versions", authenticate, async (req: any, res: any, next: any) => {
+  app.get("/api/documents/:id/versions", async (req: any, res: any, next: any) => {
     try {
       const versions = await db.select()
         .from(documentVersions)
@@ -925,7 +833,7 @@ async function startServer() {
     }
   });
 
-  app.put("/api/documents/:id/ai-status", authenticate, async (req: any, res: any, next: any) => {
+  app.put("/api/documents/:id/ai-status", async (req: any, res: any, next: any) => {
     try {
       const { aiStatus } = req.body; // Uploaded, Processed, Reviewed, Approved, Used in AI
       if (!aiStatus) return res.status(400).json({ message: "aiStatus is required" });
@@ -943,7 +851,7 @@ async function startServer() {
     }
   });
 
-  app.delete("/api/documents/:id", authenticate, async (req: any, res: any, next: any) => {
+  app.delete("/api/documents/:id", async (req: any, res: any, next: any) => {
     try {
       const deletedDoc = await db.update(documents)
         .set({ status: 'Deleted', updatedAt: new Date() })
@@ -972,7 +880,7 @@ async function startServer() {
   // 4. HISTORICAL REPOSITORY - Real Audit Findings & History
   // ==========================================
 
-  app.get("/api/historical-audits", authenticate, async (req: any, res: any, next: any) => {
+  app.get("/api/historical-audits", async (req: any, res: any, next: any) => {
     try {
       const { universeId, engagementId } = req.query;
       let conditions: any[] = [];
@@ -989,7 +897,7 @@ async function startServer() {
     }
   });
 
-  app.post("/api/historical-audits", authenticate, async (req: any, res: any, next: any) => {
+  app.post("/api/historical-audits", async (req: any, res: any, next: any) => {
     try {
       const { universeId, engagementId, auditYear, auditTitle, overallOpinion = 'Qualified', overallRiskRating = 'Medium', auditorInCharge, completedDate } = req.body;
       
@@ -1020,7 +928,7 @@ async function startServer() {
     }
   });
 
-  app.get("/api/historical-findings", authenticate, async (req: any, res: any, next: any) => {
+  app.get("/api/historical-findings", async (req: any, res: any, next: any) => {
     try {
       const { historicalAuditId, engagementId, severity, issueStatus } = req.query;
       let conditions: any[] = [];
@@ -1039,7 +947,7 @@ async function startServer() {
     }
   });
 
-  app.post("/api/historical-findings", authenticate, async (req: any, res: any, next: any) => {
+  app.post("/api/historical-findings", async (req: any, res: any, next: any) => {
     try {
       const { historicalAuditId, engagementId, findingCode, title, description, severity = 'Medium', isRepeat = false, repeatCount = 0, managementResponse, issueStatus = 'Open', targetClosureDate } = req.body;
 
@@ -1073,7 +981,7 @@ async function startServer() {
     }
   });
 
-  app.put("/api/historical-findings/:id", authenticate, async (req: any, res: any, next: any) => {
+  app.put("/api/historical-findings/:id", async (req: any, res: any, next: any) => {
     try {
       const updated = await db.update(historicalFindings)
         .set(req.body)
@@ -1092,7 +1000,7 @@ async function startServer() {
   // 5. PLANNING QUESTIONNAIRE - Persist Responses & Version History
   // ==========================================
 
-  app.get("/api/audits/:id/questionnaire", authenticate, async (req: any, res: any, next: any) => {
+  app.get("/api/audits/:id/questionnaire", async (req: any, res: any, next: any) => {
     try {
       const { id } = req.params;
       const latest = await db.select()
@@ -1131,7 +1039,7 @@ async function startServer() {
     }
   });
 
-  app.post("/api/audits/:id/questionnaire", authenticate, async (req: any, res: any, next: any) => {
+  app.post("/api/audits/:id/questionnaire", async (req: any, res: any, next: any) => {
     try {
       const { id } = req.params;
       const { responses, status = 'Submitted' } = req.body;
@@ -1177,7 +1085,7 @@ async function startServer() {
     }
   });
 
-  app.get("/api/audits/:id/questionnaire/versions", authenticate, async (req: any, res: any, next: any) => {
+  app.get("/api/audits/:id/questionnaire/versions", async (req: any, res: any, next: any) => {
     try {
       const versions = await db.select()
         .from(planningQuestionnaires)
@@ -1194,7 +1102,7 @@ async function startServer() {
   // 6. PLANNING READINESS SCORE - Dynamic Backend Calculation
   // ==========================================
 
-  app.get("/api/audits/:id/readiness", authenticate, async (req: any, res: any, next: any) => {
+  app.get("/api/audits/:id/readiness", async (req: any, res: any, next: any) => {
     try {
       const { id } = req.params;
       const audit = await db.select().from(engagements).where(eq(engagements.id, id)).limit(1);
@@ -1294,7 +1202,7 @@ async function startServer() {
   // 7. MISSING DOCUMENTS - Automated Gap Analysis
   // ==========================================
 
-  app.get("/api/audits/:id/missing-documents", authenticate, async (req: any, res: any, next: any) => {
+  app.get("/api/audits/:id/missing-documents", async (req: any, res: any, next: any) => {
     try {
       const { id } = req.params;
       const audit = await db.select().from(engagements).where(eq(engagements.id, id)).limit(1);
@@ -1359,7 +1267,7 @@ async function startServer() {
   // 8. APPROVAL WORKFLOW - Save, Reviewer, Comments, Status, History
   // ==========================================
 
-  app.get("/api/audits/:id/approval", authenticate, async (req: any, res: any, next: any) => {
+  app.get("/api/audits/:id/approval", async (req: any, res: any, next: any) => {
     try {
       const { id } = req.params;
       const history = await db.select()
@@ -1378,7 +1286,7 @@ async function startServer() {
     }
   });
 
-  app.post("/api/audits/:id/approval/submit", authenticate, async (req: any, res: any, next: any) => {
+  app.post("/api/audits/:id/approval/submit", async (req: any, res: any, next: any) => {
     try {
       const { id } = req.params;
       const { step = 'Manager Review', reviewerId, comments } = req.body;
@@ -1418,7 +1326,7 @@ async function startServer() {
     }
   });
 
-  app.post("/api/audits/:id/approval/decision", authenticate, async (req: any, res: any, next: any) => {
+  app.post("/api/audits/:id/approval/decision", async (req: any, res: any, next: any) => {
     try {
       const { id } = req.params;
       const { decision, comments, step = 'Manager Sign-off' } = req.body; // 'Approved' | 'Changes Requested' | 'Rejected'
@@ -1469,7 +1377,7 @@ async function startServer() {
   // 9. AUDIT LOGS - Track Create, Update, Delete, Approval, Upload, Review
   // ==========================================
 
-  app.get("/api/audit-logs", authenticate, async (req: any, res: any, next: any) => {
+  app.get("/api/audit-logs", async (req: any, res: any, next: any) => {
     try {
       const { search, action, entityType, userId, page = '1', limit = '15' } = req.query;
       const pageNum = Math.max(1, parseInt(page as string, 10) || 1);
@@ -1528,7 +1436,7 @@ async function startServer() {
   // ==========================================
 
   // 1. Document Intelligence
-  app.post("/api/ai/document-intelligence", authenticate, async (req: any, res: any, next: any) => {
+  app.post("/api/ai/document-intelligence", async (req: any, res: any, next: any) => {
     try {
       const { documentName, category, rawText } = req.body;
       const result = await runDocumentIntelligence({
@@ -1545,7 +1453,7 @@ async function startServer() {
   });
 
   // 2. Historical Audit Analyzer
-  app.post("/api/ai/historical-analyzer", authenticate, async (req: any, res: any, next: any) => {
+  app.post("/api/ai/historical-analyzer", async (req: any, res: any, next: any) => {
     try {
       const { engagementName, department, engagementId } = req.body;
       
@@ -1572,7 +1480,7 @@ async function startServer() {
   });
 
   // 3. SOP Analyzer
-  app.post("/api/ai/sop-analyzer", authenticate, async (req: any, res: any, next: any) => {
+  app.post("/api/ai/sop-analyzer", async (req: any, res: any, next: any) => {
     try {
       const { sopTitle, department, sopText } = req.body;
       const result = await runSopAnalyzer({
@@ -1589,7 +1497,7 @@ async function startServer() {
   });
 
   // 4. Financial Analyzer
-  app.post("/api/ai/financial-analyzer", authenticate, async (req: any, res: any, next: any) => {
+  app.post("/api/ai/financial-analyzer", async (req: any, res: any, next: any) => {
     try {
       const { financialYear, department, rawFinancialData } = req.body;
       const result = await runFinancialAnalyzer({
@@ -1606,7 +1514,7 @@ async function startServer() {
   });
 
   // 5. Risk Engine
-  app.post("/api/ai/risk-engine", authenticate, async (req: any, res: any, next: any) => {
+  app.post("/api/ai/risk-engine", async (req: any, res: any, next: any) => {
     try {
       const { engagementName, department, historicalAnalysis, financialAnalysis, sopAnalysis, questionnaireResponses, documentsSummary } = req.body;
       const result = await runRiskEngine({
@@ -1627,7 +1535,7 @@ async function startServer() {
   });
 
   // 6. Planning Generator
-  app.post("/api/ai/planning-generator", authenticate, async (req: any, res: any, next: any) => {
+  app.post("/api/ai/planning-generator", async (req: any, res: any, next: any) => {
     try {
       const { engagementName, department, financialYear, auditType, riskEngineOutput, financialOutput, historicalOutput, questionnaireResponses } = req.body;
       const result = await runPlanningGenerator({
@@ -1649,7 +1557,7 @@ async function startServer() {
   });
 
   // 7. Scoping Generator
-  app.post("/api/ai/scoping-generator", authenticate, async (req: any, res: any, next: any) => {
+  app.post("/api/ai/scoping-generator", async (req: any, res: any, next: any) => {
     try {
       const { engagementName, department, auditType, sopOutput, riskOutput } = req.body;
       const result = await runScopingGenerator({
@@ -1668,7 +1576,7 @@ async function startServer() {
   });
 
   // 8. Audit Program Generator
-  app.post("/api/ai/audit-program-generator", authenticate, async (req: any, res: any, next: any) => {
+  app.post("/api/ai/audit-program-generator", async (req: any, res: any, next: any) => {
     try {
       const { engagementName, auditType, riskOutput, scopingOutput } = req.body;
       const result = await runAuditProgramGenerator({
@@ -1686,7 +1594,7 @@ async function startServer() {
   });
 
   // 9. Master Orchestrator for Full Audit Workspace Pipeline
-  app.post("/api/ai/orchestrate-full", authenticate, async (req: any, res: any, next: any) => {
+  app.post("/api/ai/orchestrate-full", async (req: any, res: any, next: any) => {
     try {
       const { engagementId, engagementName, department, auditType, financialYear } = req.body;
 
@@ -1729,7 +1637,7 @@ async function startServer() {
   });
 
   // 10. AI Observability Metrics & Telemetry Logs
-  app.get("/api/ai/observability-logs", authenticate, async (req: any, res: any) => {
+  app.get("/api/ai/observability-logs", async (req: any, res: any) => {
     const { moduleName, limit = '50' } = req.query;
     const limitNum = parseInt(limit as string, 10) || 50;
     
@@ -1781,7 +1689,7 @@ async function startServer() {
   };
 
   // Stage 1: Document Intelligence + Historical + SOP + Financial + Risk Engine -> STOP
-  app.post("/api/ai/staged/stage1", authenticate, async (req: any, res: any, next: any) => {
+  app.post("/api/ai/staged/stage1", async (req: any, res: any, next: any) => {
     try {
       const payload = await constructEngagementPayload(req.body.engagementId, req.body);
       const result = await executeStage1(payload);
@@ -1794,7 +1702,7 @@ async function startServer() {
   });
 
   // Stage 2: Planning Generator -> STOP (Requires Stage 1 Human Approval)
-  app.post("/api/ai/staged/stage2", authenticate, async (req: any, res: any, next: any) => {
+  app.post("/api/ai/staged/stage2", async (req: any, res: any, next: any) => {
     try {
       const payload = await constructEngagementPayload(req.body.engagementId, req.body);
       const result = await executeStage2(payload);
@@ -1807,7 +1715,7 @@ async function startServer() {
   });
 
   // Stage 3: Scoping Generator -> STOP (Requires Stage 2 Human Approval)
-  app.post("/api/ai/staged/stage3", authenticate, async (req: any, res: any, next: any) => {
+  app.post("/api/ai/staged/stage3", async (req: any, res: any, next: any) => {
     try {
       const payload = await constructEngagementPayload(req.body.engagementId, req.body);
       const result = await executeStage3(payload);
@@ -1820,7 +1728,7 @@ async function startServer() {
   });
 
   // Stage 4: Audit Program Generator -> Complete (Requires Stage 3 Human Approval)
-  app.post("/api/ai/staged/stage4", authenticate, async (req: any, res: any, next: any) => {
+  app.post("/api/ai/staged/stage4", async (req: any, res: any, next: any) => {
     try {
       const payload = await constructEngagementPayload(req.body.engagementId, req.body);
       const result = await executeStage4(payload);
@@ -1833,14 +1741,14 @@ async function startServer() {
   });
 
   // Get Staged Status and Approval State for an engagement
-  app.get("/api/ai/staged/status/:engagementId", authenticate, async (req: any, res: any) => {
+  app.get("/api/ai/staged/status/:engagementId", async (req: any, res: any) => {
     const { engagementId } = req.params;
     const stages = humanReviewManager.getEngagementStages(engagementId);
     res.json({ engagementId, stages });
   });
 
   // Human Review Action endpoint (Approve, Reject, Request Revision, Add Comments)
-  app.post("/api/ai/staged/review-action", authenticate, async (req: any, res: any, next: any) => {
+  app.post("/api/ai/staged/review-action", async (req: any, res: any, next: any) => {
     try {
       const { engagementId, stageNumber, action, comments, overrideOutputs } = req.body;
       if (!engagementId || !stageNumber || !action) {

@@ -15,8 +15,13 @@ interface AuthState {
 }
 
 export const useStore = create<AuthState>((set) => ({
-  user: null,
-  authInitialized: false,
+  user: {
+    id: "demo-user",
+    email: "demo@auditalp.com",
+    name: "Demo Audit Manager",
+    role: "Head of Internal Audit"
+  },
+  authInitialized: true,
   setUser: (user) => set({ user }),
   setAuthInitialized: (initialized) => set({ authInitialized: initialized }),
 }));

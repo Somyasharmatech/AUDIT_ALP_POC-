@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 import { PageLayout } from '@/src/components/layout/PageLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/card';
 import { Button } from '@/src/components/ui/button';
 import { Badge } from '@/src/components/ui/badge';
-import { Plus, Search, Filter, Briefcase, AlertTriangle, CheckCircle, Clock, BarChart3, ChevronRight } from 'lucide-react';
-import { ApiClient } from '@/src/lib/api';
+import { Plus, Search, Briefcase, CheckCircle, Clock, BarChart3, ChevronRight, PlayCircle } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+
+const MOCK_AUDITS = [
+  { id: '1', name: 'Procure to Pay Automation Audit', department: 'Finance & Treasury', financialYear: '2025-26', status: 'In Progress' },
+  { id: '2', name: 'Cloud Infrastructure Security Review', department: 'IT', financialYear: '2025-26', status: 'Planning Started' },
+  { id: '3', name: 'Payroll Processing & Compliance', department: 'HR', financialYear: '2025-26', status: 'Completed' },
+  { id: '4', name: 'Vendor Risk Management', department: 'Operations', financialYear: '2025-26', status: 'Completed' },
+  { id: '5', name: 'Data Privacy & GDPR Readiness', department: 'IT', financialYear: '2025-26', status: 'In Progress' },
+];
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -15,28 +21,19 @@ export default function Dashboard() {
   const [financialYear, setFinancialYear] = useState('');
   const [department, setDepartment] = useState('');
 
-  const { data: rawAudits, isLoading } = useQuery({
-    queryKey: ['audits', search, financialYear, department],
-    queryFn: () => {
-      const params: any = {};
-      if (search) params.search = search;
-      if (financialYear) params.financialYear = financialYear;
-      if (department) params.department = department;
-      return ApiClient.get('/audits', params);
-    }
+  const filteredAudits = MOCK_AUDITS.filter(a => {
+    if (search && !a.name.toLowerCase().includes(search.toLowerCase())) return false;
+    if (financialYear && a.financialYear !== financialYear) return false;
+    if (department && a.department !== department) return false;
+    return true;
   });
 
-  const audits = Array.isArray(rawAudits) ? rawAudits : (rawAudits as any)?.items || [];
+  const totalAudits = filteredAudits.length;
+  const completedCount = filteredAudits.filter(a => a.status === 'Completed').length;
+  const inProgressCount = filteredAudits.filter(a => a.status === 'In Progress').length;
+  const planningStartedCount = filteredAudits.filter(a => a.status === 'Planning Started').length;
 
-  const totalAudits = (rawAudits as any)?.total ?? audits.length;
-  const completedPlanning = audits.filter((a: any) => a.status === 'Fieldwork' || a.status === 'Reporting' || a.status === 'Closed').length;
-  const pendingPlanning = audits.filter((a: any) => a.status === 'Planning' || a.status === 'Not Started').length;
-  const highRisk = audits.filter((a: any) => a.priority === 'High').length;
-  const mediumRisk = audits.filter((a: any) => a.priority === 'Medium').length;
-  const lowRisk = audits.filter((a: any) => a.priority === 'Low').length;
-
-  // Aggregate departments for chart
-  const deptCounts = audits.reduce((acc: any, audit: any) => {
+  const deptCounts = filteredAudits.reduce((acc: any, audit: any) => {
     acc[audit.department] = (acc[audit.department] || 0) + 1;
     return acc;
   }, {});
@@ -78,8 +75,8 @@ export default function Dashboard() {
           <Card className="rounded-sm shadow-sm border-[#DEE2E6] bg-white">
             <CardContent className="p-4 flex items-center justify-between">
               <div>
-                <p className="text-[12px] font-medium text-[#6C757D] uppercase tracking-wider mb-1">Completed Planning</p>
-                <p className="text-2xl font-bold text-[#198754]">{completedPlanning}</p>
+                <p className="text-[12px] font-medium text-[#6C757D] uppercase tracking-wider mb-1">Completed</p>
+                <p className="text-2xl font-bold text-[#198754]">{completedCount}</p>
               </div>
               <div className="h-10 w-10 bg-[#F8F9FA] rounded flex items-center justify-center">
                 <CheckCircle className="h-5 w-5 text-[#198754]" />
@@ -90,11 +87,11 @@ export default function Dashboard() {
           <Card className="rounded-sm shadow-sm border-[#DEE2E6] bg-white">
             <CardContent className="p-4 flex items-center justify-between">
               <div>
-                <p className="text-[12px] font-medium text-[#6C757D] uppercase tracking-wider mb-1">Pending Planning</p>
-                <p className="text-2xl font-bold text-[#FFC107]">{pendingPlanning}</p>
+                <p className="text-[12px] font-medium text-[#6C757D] uppercase tracking-wider mb-1">In Progress</p>
+                <p className="text-2xl font-bold text-[#005A9E]">{inProgressCount}</p>
               </div>
               <div className="h-10 w-10 bg-[#F8F9FA] rounded flex items-center justify-center">
-                <Clock className="h-5 w-5 text-[#FFC107]" />
+                <PlayCircle className="h-5 w-5 text-[#005A9E]" />
               </div>
             </CardContent>
           </Card>
@@ -102,17 +99,11 @@ export default function Dashboard() {
           <Card className="rounded-sm shadow-sm border-[#DEE2E6] bg-white">
             <CardContent className="p-4 flex items-center justify-between">
               <div>
-                <p className="text-[12px] font-medium text-[#6C757D] uppercase tracking-wider mb-1">Risk Profile</p>
-                <div className="flex gap-2 items-end">
-                   <span className="text-xl font-bold text-[#DC3545]" title="High Risk">{highRisk}</span>
-                   <span className="text-sm font-bold text-[#DEE2E6] mb-1">/</span>
-                   <span className="text-lg font-bold text-[#FFC107]" title="Medium Risk">{mediumRisk}</span>
-                   <span className="text-sm font-bold text-[#DEE2E6] mb-1">/</span>
-                   <span className="text-md font-bold text-[#198754]" title="Low Risk">{lowRisk}</span>
-                </div>
+                <p className="text-[12px] font-medium text-[#6C757D] uppercase tracking-wider mb-1">Planning Started</p>
+                <p className="text-2xl font-bold text-[#FFC107]">{planningStartedCount}</p>
               </div>
               <div className="h-10 w-10 bg-[#F8F9FA] rounded flex items-center justify-center">
-                <AlertTriangle className="h-5 w-5 text-[#DC3545]" />
+                <Clock className="h-5 w-5 text-[#FFC107]" />
               </div>
             </CardContent>
           </Card>
@@ -160,7 +151,7 @@ export default function Dashboard() {
                        className="h-8 pl-8 pr-3 text-[13px] border border-[#DEE2E6] rounded-sm focus:outline-none focus:border-[#005A9E] w-64 bg-white" 
                      />
                    </div>
-                   <select
+                   <select 
                      value={financialYear}
                      onChange={(e) => setFinancialYear(e.target.value)}
                      className="h-8 text-[13px] border border-[#DEE2E6] rounded-sm px-3 focus:outline-none focus:border-[#005A9E] bg-white"
@@ -169,13 +160,13 @@ export default function Dashboard() {
                      <option value="2025-26">2025-26</option>
                      <option value="2026-27">2026-27</option>
                    </select>
-                   <select
+                   <select 
                      value={department}
                      onChange={(e) => setDepartment(e.target.value)}
                      className="h-8 text-[13px] border border-[#DEE2E6] rounded-sm px-3 focus:outline-none focus:border-[#005A9E] bg-white"
                    >
                      <option value="">All Depts</option>
-                     <option value="Finance">Finance & Treasury</option>
+                     <option value="Finance & Treasury">Finance & Treasury</option>
                      <option value="IT">IT</option>
                      <option value="HR">HR</option>
                      <option value="Operations">Operations</option>
@@ -186,7 +177,7 @@ export default function Dashboard() {
                 <table className="w-full text-[13px] text-left">
                   <thead className="text-[11px] uppercase tracking-wider bg-[#FFFFFF] text-[#6C757D] border-b border-[#DEE2E6] sticky top-0">
                     <tr>
-                      <th className="px-4 py-2 font-semibold">Engagement Name</th>
+                      <th className="px-4 py-2 font-semibold">Audit Name (Auto Extracted)</th>
                       <th className="px-4 py-2 font-semibold">Department</th>
                       <th className="px-4 py-2 font-semibold">Year</th>
                       <th className="px-4 py-2 font-semibold">Status</th>
@@ -194,36 +185,30 @@ export default function Dashboard() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#DEE2E6]">
-                    {isLoading ? (
-                      <tr><td colSpan={5} className="p-4 text-center text-[#6C757D]">Loading...</td></tr>
-                    ) : audits.length === 0 ? (
-                      <tr><td colSpan={5} className="p-4 text-center text-[#6C757D]">No audits found.</td></tr>
-                    ) : (
-                      audits.map((audit: any) => (
-                        <tr key={audit.id} className="hover:bg-[#F8F9FA] transition-colors">
-                          <td className="px-4 py-2.5 font-medium text-[#005A9E] cursor-pointer hover:underline" onClick={() => navigate(`/audit/${audit.id}/workspace`)}>
-                            {audit.name}
-                          </td>
-                          <td className="px-4 py-2.5 text-[#495057]">{audit.department}</td>
-                          <td className="px-4 py-2.5 text-[#495057]">{audit.financialYear}</td>
-                          <td className="px-4 py-2.5">
-                            <Badge variant="outline" className={`rounded-sm text-[10px] font-semibold tracking-wide ${
-                              audit.status === 'Planning' ? 'border-[#FFC107] text-[#FFC107]' :
-                              audit.status === 'Fieldwork' ? 'border-[#005A9E] text-[#005A9E]' :
-                              audit.status === 'Closed' ? 'border-[#198754] text-[#198754]' :
-                              'border-[#6C757D] text-[#6C757D]'
-                            }`}>
-                              {audit.status.toUpperCase()}
-                            </Badge>
-                          </td>
-                          <td className="px-4 py-2.5 text-right">
-                             <Button variant="ghost" size="sm" onClick={() => navigate(`/audit/${audit.id}/workspace`)} className="h-7 text-xs text-[#005A9E] hover:bg-[#E5F0FA] font-medium gap-1 px-2">
-                               Workspace <ChevronRight className="h-3.5 w-3.5" />
-                             </Button>
-                          </td>
-                        </tr>
-                      ))
-                    )}
+                    {filteredAudits.map((audit: any) => (
+                      <tr key={audit.id} className="hover:bg-[#F8F9FA] transition-colors">
+                        <td className="px-4 py-2.5 font-medium text-[#005A9E] cursor-pointer hover:underline" onClick={() => navigate(`/audit/${audit.id}/workspace`)}>
+                          {audit.name}
+                        </td>
+                        <td className="px-4 py-2.5 text-[#495057]">{audit.department}</td>
+                        <td className="px-4 py-2.5 text-[#495057]">{audit.financialYear}</td>
+                        <td className="px-4 py-2.5">
+                          <Badge variant="outline" className={`rounded-sm text-[10px] font-semibold tracking-wide ${
+                            audit.status === 'Planning Started' ? 'border-[#FFC107] text-[#FFC107]' :
+                            audit.status === 'In Progress' ? 'border-[#005A9E] text-[#005A9E]' :
+                            audit.status === 'Completed' ? 'border-[#198754] text-[#198754]' :
+                            'border-[#6C757D] text-[#6C757D]'
+                          }`}>
+                            {audit.status.toUpperCase()}
+                          </Badge>
+                        </td>
+                        <td className="px-4 py-2.5 text-right">
+                           <Button variant="ghost" size="sm" onClick={() => navigate(`/audit/${audit.id}/workspace`)} className="h-7 text-xs text-[#005A9E] hover:bg-[#E5F0FA] font-medium gap-1 px-2">
+                             Workspace <ChevronRight className="h-3.5 w-3.5" />
+                           </Button>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>

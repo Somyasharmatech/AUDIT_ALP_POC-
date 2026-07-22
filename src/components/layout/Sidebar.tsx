@@ -52,16 +52,6 @@ export function Sidebar() {
           <div className="space-y-1">
             <NavItem to="/dashboard" icon={<LayoutDashboard className="h-4 w-4" />} label="Annual Dashboard" />
             <NavItem to="/audit/new" icon={<PlusCircle className="h-4 w-4" />} label="Create Planning" />
-            <NavItem to="/audits/universe" icon={<Server className="h-4 w-4" />} label="Audit Universe" />
-            <NavItem to="/audits/calendar" icon={<CalendarDays className="h-4 w-4" />} label="Audit Calendar" />
-          </div>
-        </div>
-
-        <div>
-          <p className="px-3 text-[11px] font-semibold text-[#64748B] uppercase tracking-wider mb-2">Workspace</p>
-          <div className="space-y-1">
-            <NavItem to="/reports" icon={<FileText className="h-4 w-4" />} label="Findings & Reports" badge={3} />
-            <NavItem to="/analytics" icon={<BarChart className="h-4 w-4" />} label="Analytics" />
           </div>
         </div>
       </div>
