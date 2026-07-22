@@ -13,6 +13,7 @@ import {
 import { toast } from 'sonner';
 
 import { ExecutiveSummary } from '@/src/components/workspace/ExecutiveSummary';
+import { AuditIntelligenceCenter } from '@/src/components/workspace/AuditIntelligenceCenter';
 import { BusinessUnderstanding } from '@/src/components/workspace/BusinessUnderstanding';
 import { SopReview } from '@/src/components/workspace/SopReview';
 import { ProcessFlow } from '@/src/components/workspace/ProcessFlow';
@@ -92,7 +93,7 @@ export default function AuditWorkspace() {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
   // Results state
-  const [activeTab, setActiveTab] = useState('executive-summary');
+  const [activeTab, setActiveTab] = useState('audit-intelligence-center');
 
   const handleUpload = (docId: string) => {
     setDocuments(docs => docs.map(d => 
@@ -142,8 +143,9 @@ export default function AuditWorkspace() {
              <div className="p-4 border-b border-[#DEE2E6]">
                <h2 className="text-[14px] font-bold text-[#212529] uppercase tracking-wider">AI Outputs</h2>
              </div>
-             <div className="flex-1 overflow-y-auto py-2">
+              <div className="flex-1 overflow-y-auto py-2">
                 {[
+                  { id: 'audit-intelligence-center', label: 'Audit Intelligence Center', icon: ShieldCheck },
                   { id: 'executive-summary', label: 'Executive Summary', icon: Sparkles },
                   { id: 'business-understanding', label: 'Business Understanding', icon: Building2 },
                   { id: 'sop-review', label: 'SOP Review & Edit', icon: FileCheck },
@@ -322,6 +324,7 @@ export default function AuditWorkspace() {
               {/* PHASE: RESULTS */}
               {phase === 'results' && (
                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  {activeTab === 'audit-intelligence-center' && <AuditIntelligenceCenter onSelectTab={(tabId) => setActiveTab(tabId)} />}
                   {activeTab === 'executive-summary' && <ExecutiveSummary />}
                   {activeTab === 'business-understanding' && <BusinessUnderstanding />}
                   {activeTab === 'sop-review' && <SopReview />}

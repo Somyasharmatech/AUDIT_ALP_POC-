@@ -1,10 +1,49 @@
 import React from 'react';
 import { Badge } from '@/src/components/ui/badge';
+import { AIReasoningSection } from './AIReasoningSection';
 
 export function ProcessFlow() {
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-[#212529] border-b border-[#DEE2E6] pb-3">AI Generated Process Flow</h2>
+    <div className="space-y-6 animate-in fade-in duration-500">
+      <div className="flex items-center justify-between border-b border-[#DEE2E6] pb-3">
+        <div>
+          <span className="text-xs font-bold text-[#005A9E] uppercase tracking-wider">Automated Process Mining</span>
+          <h2 className="text-2xl font-bold text-[#212529] mt-1">AI Generated BPMN Process Architecture</h2>
+        </div>
+        <Badge variant="outline" className="border-[#005A9E] text-[#005A9E] bg-[#E5F0FA]">Auto-Extracted BPMN 2.0</Badge>
+      </div>
+
+      {/* AI REASONING FOR PROCESS FLOW */}
+      <AIReasoningSection 
+        title="AI Process Mining & Control Point Reasoning"
+        whyConclusion="Extracted end-to-end BPMN flow by parsing SAP transaction event logs (ME21N for POs, MIGO for Goods Receipt, MIRO for Invoices)."
+        preferredConclusionReason="Selected 3-way match as the critical decision gate because 84% of payment errors occur due to quantity or price variances between GRN and MIRO."
+        conflictingEvidence="Policy manual states VP approval is required above $20K, whereas ERP system config allows departmental directors to approve up to $50K."
+        overallConfidence={96}
+        influencingDocs={[
+          { docName: "SAP System Event Logs (T-code MIRO/ME21N)", percentage: 55 },
+          { docName: "Operations Manual v2.4", percentage: 25 },
+          { docName: "Previous Audit Report", percentage: 20 }
+        ]}
+        assumptions={[
+          {
+            assumption: "Assumed non-PO invoice processing bypasses warehouse GRN step entirely.",
+            reason: "No physical receiving logs found for direct service invoice vouchers.",
+            impactIfIncorrect: "Understatement of warehouse receiving control coverage.",
+            confidence: 92
+          }
+        ]}
+        whatIfAnalysis={{
+          thirtyDays: "Manual override bottleneck at $50K VP approval step will cause vendor payment delays.",
+          ninetyDays: "Vendor hold notices on raw material shipments if 3-way match exceptions remain uncleared.",
+          oneEightyDays: "Procurement price inflation due to lost volume rebates from delayed vendor payments."
+        }}
+        limitations={{
+          undetermined: "Sub-process workflow routing for emergency non-standard purchase requisitions.",
+          additionalDocsNeeded: "Emergency Procurement Protocol (EPP v1.2).",
+          confidenceGain: "4%"
+        }}
+      />
       
       <div className="flex flex-col items-center py-10 bg-[#F8F9FA] border border-[#DEE2E6] rounded-sm shadow-sm relative overflow-hidden">
         <div className="absolute top-4 right-4 flex gap-2">
@@ -85,3 +124,4 @@ export function ProcessFlow() {
     </div>
   );
 }
+

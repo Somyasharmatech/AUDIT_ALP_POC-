@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/ca
 import { Badge } from '@/src/components/ui/badge';
 import { Button } from '@/src/components/ui/button';
 import { Target, CheckCircle2, XCircle, Building2, Laptop, MapPin, Download, Filter } from 'lucide-react';
+import { AIReasoningSection } from './AIReasoningSection';
 
 export function ScopingDocument() {
   return (
@@ -23,7 +24,40 @@ export function ScopingDocument() {
         </div>
       </div>
 
+      {/* AI REASONING FOR SCOPING */}
+      <AIReasoningSection 
+        title="AI Scoping Optimization & Boundary Reasoning"
+        whyConclusion="Defined in-scope entities by filtering transactional accounts exceeding performance materiality ($1.125M) and high inherent risk indicators."
+        preferredConclusionReason="Excluded payroll procurement from P2P scope because payroll disbursements follow dedicated HR audit procedures and separate bank clearing accounts."
+        conflictingEvidence="Plant managers requested inclusion of spare parts inventory management, but inventory counts are already scheduled under the FY26 Manufacturing Audit."
+        overallConfidence={95}
+        influencingDocs={[
+          { docName: "Trial Balance Q4 FY25", percentage: 50 },
+          { docName: "Annual Audit Plan FY26", percentage: 30 },
+          { docName: "Enterprise Risk Register", percentage: 20 }
+        ]}
+        assumptions={[
+          {
+            assumption: "Assumed banking gateway HSBC/Citi APIs are standardized across all regional operating hubs.",
+            reason: "Central treasury policy mandates unified payment gateway integration.",
+            impactIfIncorrect: "Regional payment testing scripts would require customized procedures.",
+            confidence: 92
+          }
+        ]}
+        whatIfAnalysis={{
+          thirtyDays: "Scope creep from departmental ad-hoc requests will inflate audit fieldwork hours by 15%.",
+          ninetyDays: "Focusing solely on SAP S/4HANA will miss legacy interface vulnerabilities if Ariba logs are excluded.",
+          oneEightyDays: "Clear scope boundaries ensure completion within planned 4-week execution window."
+        }}
+        limitations={{
+          undetermined: "Scope applicability to newly acquired overseas subsidiary in Q2 FY25.",
+          additionalDocsNeeded: "Subsidiary Integration Roadmap & Local ERP Configuration Specs.",
+          confidenceGain: "5%"
+        }}
+      />
+
       {/* Scope Matrix In vs Out */}
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="shadow-sm border-[#198754]">
           <CardHeader className="p-4 border-b border-[#DEE2E6] bg-[#F0FDF4]">

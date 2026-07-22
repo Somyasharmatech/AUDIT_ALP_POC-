@@ -3,8 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/ca
 import { Badge } from '@/src/components/ui/badge';
 import { Button } from '@/src/components/ui/button';
 import { ListChecks, Download, Search, CheckCircle2, AlertCircle, FileText, Filter } from 'lucide-react';
+import { AIReasoningSection } from './AIReasoningSection';
 
 interface AuditProcedure {
+
   id: string;
   category: 'Planning' | 'Vendor Onboarding' | 'PO Approval' | 'Invoice Matching' | 'Tax Compliance';
   objective: string;
@@ -104,7 +106,40 @@ export function AuditProgram() {
         </div>
       </div>
 
+      {/* AI REASONING FOR AUDIT PROGRAM */}
+      <AIReasoningSection 
+        title="AI Audit Program Substantive Testing Reasoning"
+        whyConclusion="Generated 5 targeted audit procedures mapped directly to identified high-risk nodes in the RCM and historical repeat findings."
+        preferredConclusionReason="Specified 100% full population testing for Invoice Matching using automated scripts because digital AP ledger files ($120M) enable complete data coverage."
+        conflictingEvidence="Internal Control Self-Assessment claimed 3-way match exceptions are resolved within 48 hours, but sample testing indicates 18% of variances linger unresolved for >30 days."
+        overallConfidence={97}
+        influencingDocs={[
+          { docName: "Enterprise Risk Control Matrix (RCM)", percentage: 45 },
+          { docName: "General Ledger AP Sub-Ledger Data", percentage: 35 },
+          { docName: "Delegation of Authority Policy", percentage: 20 }
+        ]}
+        assumptions={[
+          {
+            assumption: "Assumed ERP transaction log tables contain full audit trail for PO approval overrides.",
+            reason: "SAP change log parameters (T-code CDHDR/CDPOS) are active.",
+            impactIfIncorrect: "Fieldwork sampling must be expanded to manual physical approval documents.",
+            confidence: 96
+          }
+        ]}
+        whatIfAnalysis={{
+          thirtyDays: "Identification of unrecorded liabilities if 3-way match exception testing reveals held invoices.",
+          ninetyDays: "Management correction of ERP user permissions matrix to eliminate SOD violations.",
+          oneEightyDays: "Substantial reduction in annual audit fee due to reliance on automated continuous testing."
+        }}
+        limitations={{
+          undetermined: "Access to encrypted vendor bank modification transmission logs.",
+          additionalDocsNeeded: "Bank Gateway Encryption Keys & Direct API Log Access.",
+          confidenceGain: "3%"
+        }}
+      />
+
       {/* Filter and Search Bar */}
+
       <Card className="shadow-sm border-[#DEE2E6]">
         <CardContent className="p-4 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-2">

@@ -1,12 +1,51 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/card';
 import { Badge } from '@/src/components/ui/badge';
+import { AIReasoningSection } from './AIReasoningSection';
 
 export function RiskAssessment() {
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-[#212529] border-b border-[#DEE2E6] pb-3">Enterprise Risk Assessment</h2>
-      
+    <div className="space-y-6 animate-in fade-in duration-500">
+      <div className="flex items-center justify-between border-b border-[#DEE2E6] pb-3">
+        <div>
+          <span className="text-xs font-bold text-[#005A9E] uppercase tracking-wider">Quantified Risk Architecture</span>
+          <h2 className="text-2xl font-bold text-[#212529] mt-1">Enterprise Risk Assessment & Risk Control Matrix (RCM)</h2>
+        </div>
+        <Badge className="bg-[#A80000]">Inherent Risk Rating: HIGH</Badge>
+      </div>
+
+      {/* AI REASONING FOR RISK ASSESSMENT */}
+      <AIReasoningSection 
+        title="AI Risk Assessment & RCM Prioritization Reasoning"
+        whyConclusion="Calculated Inherent Risk Rating as HIGH by combining likelihood scores from SAP change logs with monetary impact estimates ($1.5M materiality threshold)."
+        preferredConclusionReason="Selected Fictitious Vendor Creation as Priority 1 risk over Duplicate Payments because duplicate checks are partially automated in SAP S/4HANA."
+        conflictingEvidence="Management rated vendor onboarding as 'Low Risk' due to two-signature policy, but ERP access control matrices reveal 6 employees possess dual create-and-approve permissions."
+        overallConfidence={98}
+        influencingDocs={[
+          { docName: "SAP User Role Permissions Matrix", percentage: 50 },
+          { docName: "Previous Audit Report", percentage: 30 },
+          { docName: "Internal Control Self-Assessment (RCSA)", percentage: 20 }
+        ]}
+        assumptions={[
+          {
+            assumption: "Assumed all manual payment overrides in SAP bypass automated SOD controls.",
+            reason: "Audit log parameters show manual payment authorization flag was set to 'Bypass Verification' in test scripts.",
+            impactIfIncorrect: "Over-scoping of manual payment testing procedures.",
+            confidence: 93
+          }
+        ]}
+        whatIfAnalysis={{
+          thirtyDays: "Ongoing dual-access permissions will allow unauthorized vendor creation without detection.",
+          ninetyDays: "Potential fraudulent disbursements during annual supplier bonus payout cycle.",
+          oneEightyDays: "External audit qualification of internal controls over financial reporting (ICFR)."
+        }}
+        limitations={{
+          undetermined: "Extent of third-party vendor background check verification performed by Human Resources.",
+          additionalDocsNeeded: "HR Third-Party Vetting SLA & Background Verification Register.",
+          confidenceGain: "4%"
+        }}
+      />
+
       <Card className="shadow-sm border-[#DEE2E6]">
         <CardHeader className="p-4 border-b border-[#DEE2E6] bg-[#F8F9FA]/50">
           <CardTitle className="text-sm font-semibold">Risk Control Matrix (RCM) Generation</CardTitle>
@@ -77,3 +116,4 @@ export function RiskAssessment() {
     </div>
   );
 }
+

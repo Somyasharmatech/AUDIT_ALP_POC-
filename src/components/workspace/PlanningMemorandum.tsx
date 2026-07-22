@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/ca
 import { Badge } from '@/src/components/ui/badge';
 import { Button } from '@/src/components/ui/button';
 import { FileText, Calendar, Users, Target, ShieldAlert, DollarSign, Download, CheckCircle2, Building2, Clock } from 'lucide-react';
+import { AIReasoningSection } from './AIReasoningSection';
 
 export function PlanningMemorandum() {
   return (
@@ -45,7 +46,40 @@ export function PlanningMemorandum() {
         </CardContent>
       </Card>
 
+      {/* EXPANDABLE AI REASONING LAYER */}
+      <AIReasoningSection 
+        title="AI Planning Memorandum Reasoning & Document Evidence Map"
+        whyConclusion="Synthesized the complete planning memo by combining historical audit weaknesses with real-time financial trial balance disclosures."
+        preferredConclusionReason="Selected P2P workflow for board review because $120M annual transaction volume represents 68% of total operational cash disbursements."
+        conflictingEvidence="Management budget plan anticipated a 10% reduction in AP processing costs, but actual Q3 expenses rose by 14.2% due to manual exception processing."
+        overallConfidence={96}
+        influencingDocs={[
+          { docName: "Previous Audit Report (FY24)", percentage: 40 },
+          { docName: "SAP Trial Balance & GL Ledger", percentage: 35 },
+          { docName: "Procurement Policy & SOP v2.4", percentage: 25 }
+        ]}
+        assumptions={[
+          {
+            assumption: "Assumed audit testing scope can proceed without delaying fiscal year-end financial reporting.",
+            reason: "Fieldwork schedule aligns with Q3 interim closing window.",
+            impactIfIncorrect: "Resource contention during year-end financial statement audit.",
+            confidence: 95
+          }
+        ]}
+        whatIfAnalysis={{
+          thirtyDays: "Fieldwork commencement without finalized SOP baseline will require additional walkthrough interviews.",
+          ninetyDays: "Delayed audit committee approval will push final report delivery into Q4 financial closing.",
+          oneEightyDays: "Higher vulnerability to undetected procurement fraud during year-end vendor settlement."
+        }}
+        limitations={{
+          undetermined: "Exact allocation of external consultant hours for specialized SAP automated controls testing.",
+          additionalDocsNeeded: "IT Staffing & External Audit Support Plan.",
+          confidenceGain: "4%"
+        }}
+      />
+
       {/* Section 1: Audit Objectives & Reason for Selection */}
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="shadow-sm border-[#DEE2E6]">
           <CardHeader className="p-4 border-b border-[#DEE2E6] bg-[#F8F9FA]/50">

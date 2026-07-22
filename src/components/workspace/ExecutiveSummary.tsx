@@ -4,8 +4,9 @@ import { Badge } from '@/src/components/ui/badge';
 import { 
   AlertCircle, ShieldAlert, Target, Info, CheckCircle2, AlertTriangle, 
   ChevronDown, ChevronUp, FileText, Calendar, Building2, Layers, BrainCircuit,
-  TrendingUp, History, DollarSign, ListChecks, ArrowRight, Clock
+  TrendingUp, History, DollarSign, ListChecks, ArrowRight, Clock, Sparkles, ShieldCheck
 } from 'lucide-react';
+import { AIReasoningSection } from './AIReasoningSection';
 
 const CircularGauge = ({ value, label, color }: { value: number, label: string, color: string }) => {
   const radius = 35;
@@ -41,9 +42,50 @@ export function ExecutiveSummary() {
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex items-center justify-between border-b border-[#DEE2E6] pb-3">
-        <h2 className="text-2xl font-bold text-[#212529]">Board-Level Executive Summary</h2>
+        <div>
+          <span className="text-xs font-bold text-[#005A9E] uppercase tracking-wider">Internal Audit Engagement Briefing</span>
+          <h2 className="text-2xl font-bold text-[#212529] mt-1">Board-Level Executive Summary</h2>
+        </div>
         <Badge variant="outline" className="border-[#005A9E] text-[#005A9E] bg-[#E5F0FA]">AI Generated Briefing</Badge>
       </div>
+
+      {/* 0. MANAGEMENT HEALTH DASHBOARD */}
+      <Card className="shadow-sm border-[#DEE2E6] bg-[#F8F9FA]">
+        <CardHeader className="p-4 border-b border-[#DEE2E6] bg-white">
+          <CardTitle className="text-xs font-bold text-[#212529] uppercase tracking-wider flex items-center justify-between">
+            <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-[#005A9E]" /> Management Health & Readiness Dashboard</span>
+            <Badge className="bg-[#198754]">Overall Governance Score: 83%</Badge>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-4">
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-3 text-center">
+            <div className="p-3 bg-white border border-[#DEE2E6] rounded-sm">
+              <span className="text-[10px] text-[#6C757D] font-bold uppercase block">Business Health</span>
+              <span className="text-xl font-bold text-[#212529]">84%</span>
+            </div>
+            <div className="p-3 bg-white border border-[#DEE2E6] rounded-sm">
+              <span className="text-[10px] text-[#6C757D] font-bold uppercase block">Audit Readiness</span>
+              <span className="text-xl font-bold text-[#005A9E]">92%</span>
+            </div>
+            <div className="p-3 bg-white border border-[#DEE2E6] rounded-sm">
+              <span className="text-[10px] text-[#6C757D] font-bold uppercase block">Compliance Health</span>
+              <span className="text-xl font-bold text-[#FFC107]">78%</span>
+            </div>
+            <div className="p-3 bg-white border border-[#DEE2E6] rounded-sm">
+              <span className="text-[10px] text-[#6C757D] font-bold uppercase block">Control Health</span>
+              <span className="text-xl font-bold text-[#A80000]">72%</span>
+            </div>
+            <div className="p-3 bg-white border border-[#DEE2E6] rounded-sm">
+              <span className="text-[10px] text-[#6C757D] font-bold uppercase block">Financial Health</span>
+              <span className="text-xl font-bold text-[#198754]">88%</span>
+            </div>
+            <div className="p-3 bg-[#E5F0FA] border border-[#005A9E] rounded-sm">
+              <span className="text-[10px] text-[#005A9E] font-bold uppercase block">Overall Governance</span>
+              <span className="text-xl font-bold text-[#005A9E]">83%</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* 1. Engagement Overview */}
       <Card className="shadow-sm border-[#DEE2E6]">
@@ -69,11 +111,169 @@ export function ExecutiveSummary() {
         </CardContent>
       </Card>
 
+      {/* BOARD INSIGHT CONCLUSION BOX */}
+      <Card className="shadow-sm border-l-4 border-l-[#005A9E] border-[#DEE2E6] bg-[#E5F0FA]/40">
+        <CardContent className="p-5">
+          <span className="text-[10px] font-bold text-[#005A9E] uppercase tracking-wider block mb-1">Board-Level Audit Committee Synthesis</span>
+          <p className="text-sm text-[#212529] font-medium leading-relaxed italic">
+            "The Procurement process demonstrates adequate operational maturity but exhibits recurring control weaknesses around vendor onboarding and payment approvals. Historical trends and financial analytics indicate increasing exposure, making this audit a high priority for field verification."
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* EXPANDABLE AI REASONING & DOCUMENT CONTRIBUTION SECTION */}
+      <AIReasoningSection 
+        title="AI Planning Reasoning & Document Evidence Map"
+        whyConclusion="AI selected the Procure to Pay process due to a 45.2% YoY increase in IT procurement expenses, recurring prior-year findings regarding Vendor Master segregation of duties, and a mandatory tax circular notice (Section 44AB)."
+        preferredConclusionReason="Targeting P2P was preferred over payroll or fixed asset audits because P2P cash outflows ($120M) exceed planning materiality ($1.5M) and carry immediate regulatory fine risk ($45K)."
+        conflictingEvidence="The uploaded Operations Manual specifies automated KYC enforcement, whereas empirical audit findings in the previous audit report reveal a 15% manual override frequency."
+        overallConfidence={94}
+        influencingDocs={[
+          { docName: "Previous Audit Report (FY 2024)", percentage: 38 },
+          { docName: "Balance Sheet & Trial Balance", percentage: 22 },
+          { docName: "Operations Manual & SOP", percentage: 15 },
+          { docName: "Government Tax Circulars", percentage: 10 },
+          { docName: "Risk Register & Fraud Register", percentage: 8 },
+          { docName: "Current Year Purchase Logs", percentage: 7 }
+        ]}
+        assumptions={[
+          {
+            assumption: "Generated updated SOP using Previous Audit Report and Policy Manual.",
+            reason: "No current post-ERP migration SOP document was provided in knowledge sources.",
+            impactIfIncorrect: "Minor procedural variance in step-by-step approval roles.",
+            confidence: 90
+          }
+        ]}
+        whatIfAnalysis={{
+          thirtyDays: "Risk of unmonitored vendor creation with manual override bypasses continuing in AP.",
+          ninetyDays: "$45,000 regulatory penalties under Section 44AB tax filing notice become finalized.",
+          oneEightyDays: "Potential unmitigated fictitious vendor payments resulting in cumulative financial loss."
+        }}
+        limitations={{
+          undetermined: "IT General Controls (ITGC) user permission matrix for automated 3-way match.",
+          additionalDocsNeeded: "SOC 1 / ITGC Report and Vendor Bank Account Modification Audit Logs.",
+          confidenceGain: "6%"
+        }}
+      />
+
+      {/* DOCUMENT QUALITY SCORES & MATURITY METRICS */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Document Quality Scorecard */}
+        <Card className="shadow-sm border-[#DEE2E6]">
+          <CardHeader className="p-4 border-b border-[#DEE2E6] bg-[#F8F9FA]/50">
+            <CardTitle className="text-sm font-semibold flex items-center justify-between">
+              <span className="flex items-center gap-2"><FileText className="h-4 w-4 text-[#005A9E]"/> Knowledge Source Quality Scorecard</span>
+              <Badge variant="outline" className="text-[10px]">13 Sources Processed</Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-4 space-y-3 text-xs">
+            <div className="grid grid-cols-5 gap-2 text-center">
+              <div className="p-2 bg-white border rounded-sm">
+                <span className="text-[10px] text-[#6C757D] block">Completeness</span>
+                <strong className="text-sm text-[#005A9E]">92%</strong>
+              </div>
+              <div className="p-2 bg-white border rounded-sm">
+                <span className="text-[10px] text-[#6C757D] block">Freshness</span>
+                <strong className="text-sm text-[#198754]">Current</strong>
+              </div>
+              <div className="p-2 bg-white border rounded-sm">
+                <span className="text-[10px] text-[#6C757D] block">Reliability</span>
+                <strong className="text-sm text-[#198754]">95%</strong>
+              </div>
+              <div className="p-2 bg-white border rounded-sm">
+                <span className="text-[10px] text-[#6C757D] block">Consistency</span>
+                <strong className="text-sm text-[#005A9E]">90%</strong>
+              </div>
+              <div className="p-2 bg-white border rounded-sm">
+                <span className="text-[10px] text-[#6C757D] block">Coverage</span>
+                <strong className="text-sm text-[#005A9E]">94%</strong>
+              </div>
+            </div>
+            <div className="p-2.5 bg-[#FFF3CD] border border-[#FFC107] text-[#856404] rounded-sm text-[11px]">
+              <strong>Missing / Outdated Info Alert:</strong> Operating SOP was last updated in 2021 prior to ERP migration. AI has automatically generated an updated SOP.
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Process & Control Maturity */}
+        <Card className="shadow-sm border-[#DEE2E6]">
+          <CardHeader className="p-4 border-b border-[#DEE2E6] bg-[#F8F9FA]/50">
+            <CardTitle className="text-sm font-semibold flex items-center justify-between">
+              <span className="flex items-center gap-2"><Target className="h-4 w-4 text-[#005A9E]"/> Process & Control Maturity</span>
+              <Badge className="bg-[#005A9E]">Level 3: Defined</Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-4 space-y-3 text-xs">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="p-2.5 bg-[#F8F9FA] border rounded-sm">
+                <span className="text-[10px] text-[#6C757D] block font-bold uppercase">Control Design Score</span>
+                <span className="text-base font-bold text-[#198754]">85% (Adequate)</span>
+              </div>
+              <div className="p-2.5 bg-[#F8F9FA] border rounded-sm">
+                <span className="text-[10px] text-[#6C757D] block font-bold uppercase">Operating Effectiveness</span>
+                <span className="text-base font-bold text-[#FFC107]">74% (Gaps Found)</span>
+              </div>
+              <div className="p-2.5 bg-[#F8F9FA] border rounded-sm">
+                <span className="text-[10px] text-[#6C757D] block font-bold uppercase">Automation vs Manual</span>
+                <span className="text-base font-bold text-[#005A9E]">66% Auto / 34% Manual</span>
+              </div>
+              <div className="p-2.5 bg-[#F8F9FA] border rounded-sm">
+                <span className="text-[10px] text-[#6C757D] block font-bold uppercase">Segregation of Duties</span>
+                <span className="text-base font-bold text-[#A80000]">68% (Attention)</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* TOP 5 EXECUTIVE INSIGHTS, ACTIONS & IMPROVEMENTS */}
+      <Card className="shadow-sm border-[#DEE2E6]">
+        <CardHeader className="p-4 border-b border-[#DEE2E6] bg-[#F8F9FA]/50">
+          <CardTitle className="text-sm font-semibold flex items-center gap-2">
+            <Sparkles className="h-4 w-4 text-[#005A9E]" /> Top Executive Insights & Strategic Action Roadmap
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-5 grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-[#495057]">
+          <div className="space-y-2">
+            <span className="font-bold text-[#005A9E] uppercase tracking-wider text-[11px] block border-b pb-1">Top 5 Executive Insights</span>
+            <ol className="space-y-1.5 list-decimal pl-4">
+              <li>P2P annual cash throughput of $120M makes process inherently material.</li>
+              <li>15% manual override frequency in vendor KYC onboarding bypasses ERP logic.</li>
+              <li>IT Software Expense YoY surge (+45.2%) requires capitalization review.</li>
+              <li>Section 44AB statutory tax filing notice creates immediate fine risk ($45K).</li>
+              <li>SOP operational baseline is stale (2021) and out of sync with SAP workflow.</li>
+            </ol>
+          </div>
+
+          <div className="space-y-2">
+            <span className="font-bold text-[#A80000] uppercase tracking-wider text-[11px] block border-b pb-1">Top 5 Immediate Actions</span>
+            <ol className="space-y-1.5 list-decimal pl-4">
+              <li>Enforce mandatory dual sign-off on all vendor KYC override requests.</li>
+              <li>Extract 100% population log for newly created AP vendor bank accounts.</li>
+              <li>Submit Section 44AB tax compliance proof to Tax Authority.</li>
+              <li>Audit user permission matrix for ERP 3-way matching exceptions.</li>
+              <li>Formalize adoption of the AI-generated updated Operating SOP.</li>
+            </ol>
+          </div>
+
+          <div className="space-y-2">
+            <span className="font-bold text-[#198754] uppercase tracking-wider text-[11px] block border-b pb-1">Top 5 Long-Term Improvements</span>
+            <ol className="space-y-1.5 list-decimal pl-4">
+              <li>Integrate automated banking API for real-time vendor verification.</li>
+              <li>Implement continuous AI monitoring on AP duplicate invoice submissions.</li>
+              <li>Establish formal quarterly ITGC user access re-certification routines.</li>
+              <li>Automate statutory tax filing schedules directly inside SAP ERP.</li>
+              <li>Standardize Delegation of Authority limit rules across regional hubs.</li>
+            </ol>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* 2. AI Executive Overview */}
       <Card className="shadow-sm border-[#DEE2E6] bg-gradient-to-br from-[#F8F9FA] to-white">
         <CardHeader className="p-4 border-b border-[#DEE2E6]">
            <CardTitle className="text-[14px] font-bold text-[#212529] uppercase tracking-wider flex items-center gap-2">
-             <BrainCircuit className="h-5 w-5 text-[#005A9E]" /> AI Executive Overview
+             <BrainCircuit className="h-5 w-5 text-[#005A9E]" /> AI Executive Overview & Strategic Assessment
            </CardTitle>
         </CardHeader>
         <CardContent className="p-6 grid grid-cols-2 gap-x-8 gap-y-6 text-sm text-[#495057]">
@@ -100,49 +300,10 @@ export function ExecutiveSummary() {
         </CardContent>
       </Card>
 
-      {/* 3. Why This Audit Was Selected */}
-      <Card className="shadow-sm border-[#DEE2E6]">
-        <CardHeader className="p-4 border-b border-[#DEE2E6] bg-[#F8F9FA]/50">
-           <CardTitle className="text-sm font-semibold">Why AI Selected This Audit</CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <table className="w-full text-sm text-left">
-             <thead className="bg-[#F8F9FA] text-[#6C757D] text-[11px] uppercase tracking-wider border-b border-[#DEE2E6]">
-               <tr>
-                 <th className="px-4 py-3 font-semibold">Reason</th>
-                 <th className="px-4 py-3 font-semibold">Supporting Evidence</th>
-                 <th className="px-4 py-3 font-semibold">Business Impact</th>
-                 <th className="px-4 py-3 font-semibold">Confidence</th>
-               </tr>
-             </thead>
-             <tbody className="divide-y divide-[#DEE2E6]">
-               <tr className="hover:bg-[#F8F9FA]">
-                 <td className="px-4 py-4 font-medium text-[#212529]">Increase in treasury transactions</td>
-                 <td className="px-4 py-4"><Badge variant="outline" className="border-[#005A9E] text-[#005A9E] bg-white">Trial Balance Variance (+12.4%)</Badge></td>
-                 <td className="px-4 py-4 text-[#495057]">Higher cash outflow exposure</td>
-                 <td className="px-4 py-4 text-[#198754] font-bold">98%</td>
-               </tr>
-               <tr className="hover:bg-[#F8F9FA]">
-                 <td className="px-4 py-4 font-medium text-[#212529]">Previous repeat findings</td>
-                 <td className="px-4 py-4"><Badge variant="outline" className="border-[#005A9E] text-[#005A9E] bg-white">Previous Audit Report (Obs #4)</Badge></td>
-                 <td className="px-4 py-4 text-[#495057]">Unmitigated control failures</td>
-                 <td className="px-4 py-4 text-[#198754] font-bold">95%</td>
-               </tr>
-               <tr className="hover:bg-[#F8F9FA]">
-                 <td className="px-4 py-4 font-medium text-[#212529]">Recent regulatory updates</td>
-                 <td className="px-4 py-4"><Badge variant="outline" className="border-[#005A9E] text-[#005A9E] bg-white">Govt Notifications (Section 44AB)</Badge></td>
-                 <td className="px-4 py-4 text-[#495057]">Compliance penalties</td>
-                 <td className="px-4 py-4 text-[#198754] font-bold">92%</td>
-               </tr>
-             </tbody>
-          </table>
-        </CardContent>
-      </Card>
-
       {/* 4. AI Decision Panel (The Three Questions) */}
       <div className="space-y-4">
-         <h3 className="text-lg font-bold text-[#212529] border-b border-[#DEE2E6] pb-2">AI Decision Panel</h3>
-         <div className="grid grid-cols-3 gap-6">
+         <h3 className="text-lg font-bold text-[#212529] border-b border-[#DEE2E6] pb-2">AI Decision Panel (Mandatory Planning Queries)</h3>
+         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card className="shadow-sm border-[#A80000] border-t-4">
               <CardHeader className="p-4 border-b border-[#DEE2E6] bg-[#F8F9FA]/50">
                 <CardTitle className="text-sm font-semibold flex items-center gap-2 text-[#A80000]">
@@ -211,45 +372,57 @@ export function ExecutiveSummary() {
          </div>
       </div>
 
-      {/* 5. Key Business Risks */}
+      {/* 5. Key Business Risks with Root Cause & Multi-Dimensional Impact */}
       <Card className="shadow-sm border-[#DEE2E6]">
         <CardHeader className="p-4 border-b border-[#DEE2E6] bg-[#F8F9FA]/50">
-           <CardTitle className="text-sm font-semibold">Key Business Risks Extracted</CardTitle>
+           <CardTitle className="text-sm font-semibold">Prioritized AI Risk Register & Root Cause Intelligence</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <table className="w-full text-sm text-left">
              <thead className="bg-[#F8F9FA] text-[#6C757D] text-[11px] uppercase tracking-wider border-b border-[#DEE2E6]">
                <tr>
-                 <th className="px-4 py-3 font-semibold">Risk & Category</th>
-                 <th className="px-4 py-3 font-semibold">Reason & Impact</th>
-                 <th className="px-4 py-3 font-semibold">Likelihood</th>
-                 <th className="px-4 py-3 font-semibold">Recommendation</th>
+                 <th className="px-4 py-3 font-semibold">Priority & Risk</th>
+                 <th className="px-4 py-3 font-semibold">Root Cause & Systemic Issue</th>
+                 <th className="px-4 py-3 font-semibold">Multi-Dimensional Business Impact</th>
+                 <th className="px-4 py-3 font-semibold">Preventive Action</th>
                </tr>
              </thead>
              <tbody className="divide-y divide-[#DEE2E6]">
                <tr className="bg-[#FDF2F2]">
-                 <td className="px-4 py-4">
-                   <div className="font-bold text-[#A80000]">Fictitious Vendor Creation</div>
-                   <Badge variant="outline" className="mt-1 border-[#A80000] text-[#A80000] text-[10px] bg-white">Operational / Fraud</Badge>
+                 <td className="px-4 py-4 align-top">
+                   <div className="font-bold text-[#A80000]">1. Fictitious Vendor Creation</div>
+                   <Badge className="mt-1 bg-[#A80000]">CRITICAL</Badge>
                  </td>
-                 <td className="px-4 py-4 text-[#495057]">
-                   <p>Manual overrides in KYC checks.</p>
-                   <p className="text-xs mt-1"><strong className="text-[#212529]">Impact:</strong> Financial Loss</p>
+                 <td className="px-4 py-4 text-[#495057] text-xs space-y-1 align-top">
+                   <p><strong>Root Cause:</strong> Manual override permissions granted without mandatory dual approval.</p>
+                   <p><strong>Systemic Issue:</strong> Incomplete segregation of duties rules in SAP ERP user roles.</p>
                  </td>
-                 <td className="px-4 py-4"><Badge className="bg-[#A80000]">High</Badge></td>
-                 <td className="px-4 py-4 text-[#495057] text-xs">Verify segregation of duties and review audit logs for vendor creation.</td>
+                 <td className="px-4 py-4 text-[#495057] text-xs space-y-1 align-top">
+                   <p><strong className="text-[#A80000]">Financial:</strong> Cash outflow loss risk.</p>
+                   <p><strong>Compliance:</strong> Internal controls failure under SOX/ICFR.</p>
+                   <p><strong>Reputation:</strong> Vendor trust erosion.</p>
+                 </td>
+                 <td className="px-4 py-4 text-[#495057] text-xs align-top">
+                   Implement dual digital sign-off and conduct 100% population audit of vendor additions.
+                 </td>
                </tr>
+
                <tr className="hover:bg-[#F8F9FA]">
-                 <td className="px-4 py-4">
-                   <div className="font-bold text-[#212529]">Duplicate Invoice Processing</div>
-                   <Badge variant="outline" className="mt-1 border-[#FFC107] text-[#856404] text-[10px] bg-white">Financial</Badge>
+                 <td className="px-4 py-4 align-top">
+                   <div className="font-bold text-[#212529]">2. Duplicate Invoice Processing</div>
+                   <Badge className="mt-1 bg-[#FFC107] text-[#856404]">HIGH</Badge>
                  </td>
-                 <td className="px-4 py-4 text-[#495057]">
-                   <p>System mismatch during 3-way match.</p>
-                   <p className="text-xs mt-1"><strong className="text-[#212529]">Impact:</strong> Overpayment</p>
+                 <td className="px-4 py-4 text-[#495057] text-xs space-y-1 align-top">
+                   <p><strong>Root Cause:</strong> ERP tolerance thresholds set too broadly for invoice numbers with special characters.</p>
+                   <p><strong>Systemic Issue:</strong> Lack of automated string cleaning during AP invoice entry.</p>
                  </td>
-                 <td className="px-4 py-4"><Badge className="bg-[#FFC107] text-[#856404]">Medium</Badge></td>
-                 <td className="px-4 py-4 text-[#495057] text-xs">Test ERP built-in duplicate check feature parameters.</td>
+                 <td className="px-4 py-4 text-[#495057] text-xs space-y-1 align-top">
+                   <p><strong className="text-[#856404]">Financial:</strong> Overpayment risk up to $250K.</p>
+                   <p><strong>Operational:</strong> Unnecessary treasury recovery overhead.</p>
+                 </td>
+                 <td className="px-4 py-4 text-[#495057] text-xs align-top">
+                   Tighten ERP duplicate detection rules and run AI fuzzy-matching script across all AP ledgers.
+                 </td>
                </tr>
              </tbody>
           </table>
@@ -310,7 +483,7 @@ export function ExecutiveSummary() {
       <div className="grid grid-cols-2 gap-6">
         <Card className="shadow-sm border-[#DEE2E6]">
           <CardHeader className="p-4 border-b border-[#DEE2E6] bg-[#F8F9FA]/50">
-             <CardTitle className="text-sm font-semibold flex items-center gap-2">Missing Documents</CardTitle>
+             <CardTitle className="text-sm font-semibold flex items-center gap-2">Missing Documents & Confidence Impact</CardTitle>
           </CardHeader>
           <CardContent className="p-0">
              <table className="w-full text-sm text-left">
@@ -324,7 +497,7 @@ export function ExecutiveSummary() {
                 <tbody className="divide-y divide-[#DEE2E6]">
                   <tr className="hover:bg-[#F8F9FA]">
                     <td className="px-4 py-4 font-medium text-[#212529]">IT General Controls Report</td>
-                    <td className="px-4 py-4 text-[#495057] text-xs">Cannot verify automated 3-way match controls.</td>
+                    <td className="px-4 py-4 text-[#495057] text-xs">Cannot verify automated 3-way match controls. Reduces ITGC confidence by 6%.</td>
                     <td className="px-4 py-4"><Badge className="bg-[#A80000]">High</Badge></td>
                   </tr>
                 </tbody>
@@ -355,65 +528,6 @@ export function ExecutiveSummary() {
         </Card>
       </div>
 
-      {/* 10. AI Recommendations */}
-      <Card className="shadow-sm border-[#DEE2E6]">
-        <CardHeader className="p-4 border-b border-[#DEE2E6] bg-[#F8F9FA]/50">
-           <CardTitle className="text-sm font-semibold">AI Audit Strategy Recommendations</CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <table className="w-full text-sm text-left">
-             <thead className="bg-[#F8F9FA] text-[#6C757D] text-[11px] uppercase tracking-wider border-b border-[#DEE2E6]">
-               <tr>
-                 <th className="px-4 py-3 font-semibold w-1/3">Recommendation</th>
-                 <th className="px-4 py-3 font-semibold">Reason & Evidence</th>
-                 <th className="px-4 py-3 font-semibold">Expected Benefit</th>
-                 <th className="px-4 py-3 font-semibold">Confidence</th>
-               </tr>
-             </thead>
-             <tbody className="divide-y divide-[#DEE2E6]">
-               <tr className="hover:bg-[#F8F9FA]">
-                 <td className="px-4 py-4 font-medium text-[#212529]">Expand sample size for Vendor Master changes.</td>
-                 <td className="px-4 py-4 text-[#495057] text-xs">
-                   <p className="mb-1"><strong>Reason:</strong> High override rate of KYC checks.</p>
-                   <p><strong>Evidence:</strong> Operations Manual logic gaps.</p>
-                 </td>
-                 <td className="px-4 py-4 text-[#495057] text-xs">Identify potential fictitious vendors.</td>
-                 <td className="px-4 py-4 text-[#198754] font-bold">96%</td>
-               </tr>
-               <tr className="hover:bg-[#F8F9FA]">
-                 <td className="px-4 py-4 font-medium text-[#212529]">Perform substantive analytical procedures on IT Expenses.</td>
-                 <td className="px-4 py-4 text-[#495057] text-xs">
-                   <p className="mb-1"><strong>Reason:</strong> +45.2% YoY variance.</p>
-                   <p><strong>Evidence:</strong> Trial Balance mapping.</p>
-                 </td>
-                 <td className="px-4 py-4 text-[#495057] text-xs">Detect uncapitalized software assets.</td>
-                 <td className="px-4 py-4 text-[#198754] font-bold">92%</td>
-               </tr>
-             </tbody>
-          </table>
-        </CardContent>
-      </Card>
-
-      {/* 11. Next Steps */}
-      <Card className="shadow-sm border-[#DEE2E6]">
-        <CardHeader className="p-4 border-b border-[#DEE2E6] bg-[#F8F9FA]/50">
-           <CardTitle className="text-sm font-semibold">Suggested Workflow Next Steps</CardTitle>
-        </CardHeader>
-        <CardContent className="p-6">
-           <div className="flex items-center justify-between text-[11px] font-semibold text-[#6C757D] uppercase tracking-wider">
-              <div className="flex flex-col items-center gap-2 text-[#005A9E]"><CheckCircle2 className="h-6 w-6"/> Business Understanding</div>
-              <div className="h-px bg-[#DEE2E6] flex-1 mx-4"></div>
-              <div className="flex flex-col items-center gap-2"><FileText className="h-6 w-6"/> SOP Review</div>
-              <div className="h-px bg-[#DEE2E6] flex-1 mx-4"></div>
-              <div className="flex flex-col items-center gap-2"><ArrowRight className="h-6 w-6"/> Process Flow</div>
-              <div className="h-px bg-[#DEE2E6] flex-1 mx-4"></div>
-              <div className="flex flex-col items-center gap-2"><ShieldAlert className="h-6 w-6"/> Risk Assessment</div>
-              <div className="h-px bg-[#DEE2E6] flex-1 mx-4"></div>
-              <div className="flex flex-col items-center gap-2"><ListChecks className="h-6 w-6"/> Audit Program</div>
-           </div>
-        </CardContent>
-      </Card>
-
       {/* 12. AI Evidence Panel */}
       <Card className="shadow-sm border-[#DEE2E6] bg-[#F8F9FA]">
         <CardHeader 
@@ -421,7 +535,7 @@ export function ExecutiveSummary() {
           onClick={() => setEvidenceOpen(!evidenceOpen)}
         >
            <CardTitle className="text-sm font-semibold flex items-center gap-2">
-             <FileText className="h-4 w-4 text-[#6C757D]"/> AI Document Evidence Panel
+             <FileText className="h-4 w-4 text-[#6C757D]"/> AI Source Document Traceability Log
            </CardTitle>
            {evidenceOpen ? <ChevronUp className="h-5 w-5 text-[#6C757D]"/> : <ChevronDown className="h-5 w-5 text-[#6C757D]"/>}
         </CardHeader>

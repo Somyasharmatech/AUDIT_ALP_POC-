@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/card';
 import { Badge } from '@/src/components/ui/badge';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from 'recharts';
+import { AIReasoningSection } from './AIReasoningSection';
 
 const trendData = [
   { year: '2021', findings: 18, open: 2, rating: 'Needs Improvement' },
@@ -13,10 +14,49 @@ const trendData = [
 
 export function HistoricalAnalysis() {
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-[#212529] border-b border-[#DEE2E6] pb-3">Historical Audit Analysis</h2>
+    <div className="space-y-6 animate-in fade-in duration-500">
+      <div className="flex items-center justify-between border-b border-[#DEE2E6] pb-3">
+        <div>
+          <span className="text-xs font-bold text-[#005A9E] uppercase tracking-wider">Multi-Year Audit Intelligence</span>
+          <h2 className="text-2xl font-bold text-[#212529] mt-1">Historical Audit Analysis & Recurring Pattern Mining</h2>
+        </div>
+        <Badge className="bg-[#A80000]">3 Repeat Findings Identified</Badge>
+      </div>
+
+      {/* AI REASONING FOR HISTORICAL ANALYSIS */}
+      <AIReasoningSection 
+        title="AI Multi-Year Pattern Analysis & Reasoning Engine"
+        whyConclusion="Identified recurring risk vectors by cross-referencing audit findings from FY21 through FY25 against current SAP post-implementation issue logs."
+        preferredConclusionReason="Prioritized 3 repeat findings over newly reported low-risk observations because repeat findings demonstrate systemic failure in management remediation commitment."
+        conflictingEvidence="Management closure reports claimed Vendor Onboarding control was fully remediated in Q2 FY24, but 2025 testing revealed 14 vendors added without secondary review."
+        overallConfidence={94}
+        influencingDocs={[
+          { docName: "Previous Audit Report (FY21-FY25)", percentage: 65 },
+          { docName: "Management Remediation Status Reports", percentage: 22 },
+          { docName: "External Audit Committee Transcripts", percentage: 13 }
+        ]}
+        assumptions={[
+          {
+            assumption: "Assumed all 8 open findings from FY25 audit remain un-remediated.",
+            reason: "No formal management re-testing completion sign-off document was provided.",
+            impactIfIncorrect: "Audit scope might duplicate completed testing efforts.",
+            confidence: 91
+          }
+        ]}
+        whatIfAnalysis={{
+          thirtyDays: "Unremediated IT General Controls will result in ongoing segregation of duties violations in SAP.",
+          ninetyDays: "External auditors will rely less on internal audit testing, increasing external audit fee budget by $60,000.",
+          oneEightyDays: "Audit Committee escalation due to overdue priority 1 repeat audit findings."
+        }}
+        limitations={{
+          undetermined: "Verification of actual operational effectiveness for 2 findings currently in 'Validation' status.",
+          additionalDocsNeeded: "Management Follow-Up Validation Sign-off Sheet.",
+          confidenceGain: "6%"
+        }}
+      />
       
       <div className="grid grid-cols-4 gap-4">
+
         <Card className="shadow-sm border-[#DEE2E6]">
           <CardContent className="p-4">
             <p className="text-[11px] font-semibold text-[#6C757D] uppercase tracking-wider mb-1">5-Year Average Rating</p>

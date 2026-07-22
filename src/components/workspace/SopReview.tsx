@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/card';
 import { Button } from '@/src/components/ui/button';
 import { Badge } from '@/src/components/ui/badge';
-import { Edit2, CheckCircle2, Save } from 'lucide-react';
+import { Edit2, CheckCircle2, Save, FileText } from 'lucide-react';
 import { toast } from 'sonner';
+import { AIReasoningSection } from './AIReasoningSection';
 
 export function SopReview() {
   const [isEditing, setIsEditing] = useState(false);
   const [isApproved, setIsApproved] = useState(false);
-  const [content, setContent] = useState(`STANDARD OPERATING PROCEDURE: PROCURE TO PAY (AI EXTRACTED)
+  const [content, setContent] = useState(`STANDARD OPERATING PROCEDURE: PROCURE TO PAY (AI SYNTHESIZED)
 
 1. PURPOSE
 The purpose of this procedure is to outline the steps required for the procurement of goods and services, ensuring compliance with organizational policies, budgetary controls, and segregation of duties.
@@ -47,9 +48,12 @@ This procedure applies to all employees involved in the requisition, purchasing,
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex items-center justify-between border-b border-[#DEE2E6] pb-3">
-        <h2 className="text-2xl font-bold text-[#212529]">SOP Review & Approval</h2>
+        <div>
+          <span className="text-xs font-bold text-[#005A9E] uppercase tracking-wider">Internal Audit Baseline Creation</span>
+          <h2 className="text-2xl font-bold text-[#212529] mt-1">SOP Review & Verification</h2>
+        </div>
         <div className="flex items-center gap-3">
           {isApproved ? (
             <Badge className="bg-[#198754] px-3 py-1 gap-1"><CheckCircle2 className="h-3.5 w-3.5" /> Approved Baseline</Badge>
@@ -71,21 +75,55 @@ This procedure applies to all employees involved in the requisition, purchasing,
           )}
         </div>
       </div>
+
+      {/* AI REASONING & ASSUMPTIONS */}
+      <AIReasoningSection 
+        title="AI SOP Synthesis Reasoning & Assumption Log"
+        whyConclusion="Synthesized the current working SOP draft by merging rules from the 2021 legacy manual with SAP S/4HANA transactional release strategies."
+        preferredConclusionReason="Selected synthetic generation because no official post-ERP migration SOP document was found in knowledge upload repositories."
+        conflictingEvidence="The 2021 manual requires hardcopy signature for PRs >$5K, whereas SAP S/4HANA system logs confirm automated electronic workflow approval is active."
+        overallConfidence={91}
+        influencingDocs={[
+          { docName: "Previous Audit Report", percentage: 48 },
+          { docName: "Procurement Policy Manual", percentage: 32 },
+          { docName: "SAP User Role Permissions List", percentage: 20 }
+        ]}
+        assumptions={[
+          {
+            assumption: "No updated SOP was provided. AI generated SOP using previous audit report and policy manual.",
+            reason: "Current operational SOP document was missing from uploaded knowledge files.",
+            impactIfIncorrect: "Systematic threshold discrepancies in manual approval limits.",
+            confidence: 90
+          }
+        ]}
+        whatIfAnalysis={{
+          thirtyDays: "Operating personnel will continue relying on unwritten tribal knowledge during SAP exception routing.",
+          ninetyDays: "Auditors will lack a formal authoritative baseline to measure operating effectiveness during field testing.",
+          oneEightyDays: "Increased risk of policy non-compliance during annual financial statement audit."
+        }}
+        limitations={{
+          undetermined: "Specific local delegation of authority limits for overseas operating entities.",
+          additionalDocsNeeded: "Local Delegation of Authority Matrix (DOA v3.0).",
+          confidenceGain: "7%"
+        }}
+      />
       
       <Card className="shadow-sm border-[#DEE2E6]">
         <CardHeader className="p-4 border-b border-[#DEE2E6] bg-[#F8F9FA]/50 flex flex-row items-center justify-between">
-          <CardTitle className="text-sm font-semibold">AI Extracted Standard Operating Procedure</CardTitle>
+          <CardTitle className="text-sm font-semibold flex items-center gap-2">
+            <FileText className="h-4 w-4 text-[#005A9E]" /> AI Extracted Standard Operating Procedure
+          </CardTitle>
           <Badge variant="outline" className="border-[#005A9E] text-[#005A9E] bg-[#E5F0FA]">AI Generated from Uploaded Documents</Badge>
         </CardHeader>
         <CardContent className="p-0">
           {isEditing ? (
             <textarea
-              className="w-full h-[500px] p-6 text-sm text-[#495057] font-mono focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#005A9E] border-none resize-none"
+              className="w-full h-[450px] p-6 text-sm text-[#495057] font-mono focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#005A9E] border-none resize-none"
               value={content}
               onChange={(e) => setContent(e.target.value)}
             />
           ) : (
-            <div className="w-full h-[500px] p-6 overflow-y-auto bg-white text-sm text-[#495057] whitespace-pre-wrap font-mono">
+            <div className="w-full h-[450px] p-6 overflow-y-auto bg-white text-sm text-[#495057] whitespace-pre-wrap font-mono">
               {content}
             </div>
           )}
@@ -94,3 +132,4 @@ This procedure applies to all employees involved in the requisition, purchasing,
     </div>
   );
 }
+

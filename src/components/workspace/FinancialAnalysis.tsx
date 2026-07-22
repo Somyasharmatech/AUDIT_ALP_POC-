@@ -1,13 +1,53 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/card';
 import { Badge } from '@/src/components/ui/badge';
+import { AIReasoningSection } from './AIReasoningSection';
 
 export function FinancialAnalysis() {
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-[#212529] border-b border-[#DEE2E6] pb-3">Financial Analysis & Materiality</h2>
-      
+    <div className="space-y-6 animate-in fade-in duration-500">
+      <div className="flex items-center justify-between border-b border-[#DEE2E6] pb-3">
+        <div>
+          <span className="text-xs font-bold text-[#005A9E] uppercase tracking-wider">Financial Audit Analytics</span>
+          <h2 className="text-2xl font-bold text-[#212529] mt-1">Financial Analysis & Materiality Benchmarking</h2>
+        </div>
+        <Badge className="bg-[#005A9E]">ISA 320 Materiality Standard</Badge>
+      </div>
+
+      {/* AI REASONING FOR FINANCIAL ANALYSIS */}
+      <AIReasoningSection 
+        title="AI Financial Materiality & Anomaly Extraction Reasoning"
+        whyConclusion="Established Overall Materiality at $1.5M (5% of PBTA) by parsing Trial Balance lines and correlating with prior year audited financial statements."
+        preferredConclusionReason="Used Profit Before Tax Benchmark rather than Revenue because net margin volatility in FY25 represents the primary audit concern for stakeholders."
+        conflictingEvidence="Trial Balance shows $3.85M in IT Expenses, but capital expenditure logs classify $1.2M of this amount as capitalized cloud migration assets."
+        overallConfidence={97}
+        influencingDocs={[
+          { docName: "Trial Balance Q4 FY25", percentage: 58 },
+          { docName: "Audited Financial Statements FY24", percentage: 28 },
+          { docName: "General Ledger Transaction Journal", percentage: 14 }
+        ]}
+        assumptions={[
+          {
+            assumption: "Assumed non-recurring legacy system maintenance expenses ($450K) will not recur in FY26.",
+            reason: "Legacy server retirement confirmed in IT infrastructure status update.",
+            impactIfIncorrect: "Overstatement of baseline recurring operating expenditure.",
+            confidence: 94
+          }
+        ]}
+        whatIfAnalysis={{
+          thirtyDays: "IT software expense misclassifications will distort Q1 departmental budget variances.",
+          ninetyDays: "Uncorrected AP aging past 90 days will trigger vendor credit hold warnings.",
+          oneEightyDays: "Potential material misstatement audit adjustment during year-end financial closing."
+        }}
+        limitations={{
+          undetermined: "Complete breakdown of unbilled goods received not invoiced (GRNI) accrual sub-ledger.",
+          additionalDocsNeeded: "GRNI Aging Schedule and Unbilled Vendor Accruals Log.",
+          confidenceGain: "3%"
+        }}
+      />
+
       <div className="grid grid-cols-3 gap-6">
+
         <Card className="shadow-sm border-[#DEE2E6]">
           <CardHeader className="p-4 border-b border-[#DEE2E6] bg-[#F8F9FA]/50">
             <CardTitle className="text-sm font-semibold text-[#005A9E]">Overall Materiality</CardTitle>
