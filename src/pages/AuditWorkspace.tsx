@@ -8,10 +8,11 @@ import { Progress } from '@/src/components/ui/progress';
 import { 
   ArrowLeft, Upload, CheckCircle2, Sparkles, AlertCircle, FileText, Settings, 
   Building2, Layers, Check, FileCheck, Target, DollarSign, Activity, GitBranch,
-  ShieldAlert, BookOpen, User, Clock, FileSpreadsheet, Loader2, ListChecks, History, BarChart3
+  ShieldAlert, BookOpen, User, Clock, FileSpreadsheet, Loader2, ListChecks, History, BarChart3, Database, ShieldCheck
 } from 'lucide-react';
 import { toast } from 'sonner';
 
+import { KnowledgeExtractionCenter } from '@/src/components/workspace/KnowledgeExtractionCenter';
 import { ExecutiveSummary } from '@/src/components/workspace/ExecutiveSummary';
 import { AuditIntelligenceCenter } from '@/src/components/workspace/AuditIntelligenceCenter';
 import { BusinessUnderstanding } from '@/src/components/workspace/BusinessUnderstanding';
@@ -93,7 +94,7 @@ export default function AuditWorkspace() {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
   // Results state
-  const [activeTab, setActiveTab] = useState('audit-intelligence-center');
+  const [activeTab, setActiveTab] = useState('knowledge-extraction');
 
   const handleUpload = (docId: string) => {
     setDocuments(docs => docs.map(d => 
@@ -145,6 +146,7 @@ export default function AuditWorkspace() {
              </div>
               <div className="flex-1 overflow-y-auto py-2">
                 {[
+                  { id: 'knowledge-extraction', label: 'Knowledge Extraction', icon: Database },
                   { id: 'audit-intelligence-center', label: 'Audit Intelligence Center', icon: ShieldCheck },
                   { id: 'executive-summary', label: 'Executive Summary', icon: Sparkles },
                   { id: 'business-understanding', label: 'Business Understanding', icon: Building2 },
@@ -324,6 +326,7 @@ export default function AuditWorkspace() {
               {/* PHASE: RESULTS */}
               {phase === 'results' && (
                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  {activeTab === 'knowledge-extraction' && <KnowledgeExtractionCenter onSelectTab={(tabId) => setActiveTab(tabId)} />}
                   {activeTab === 'audit-intelligence-center' && <AuditIntelligenceCenter onSelectTab={(tabId) => setActiveTab(tabId)} />}
                   {activeTab === 'executive-summary' && <ExecutiveSummary />}
                   {activeTab === 'business-understanding' && <BusinessUnderstanding />}

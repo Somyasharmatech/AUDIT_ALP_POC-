@@ -6,7 +6,7 @@ import { Progress } from '@/src/components/ui/progress';
 import { 
   Sparkles, ShieldCheck, ShieldAlert, AlertTriangle, CheckCircle2, XCircle, 
   ArrowRight, FileText, Building2, GitBranch, History, DollarSign, BarChart3, 
-  Target, ListChecks, Download, ExternalLink, Layers, Clock, Users, System, 
+  Target, ListChecks, Download, ExternalLink, Layers, Clock, Users, Cpu, 
   Scale, FileSpreadsheet, Zap, HelpCircle, ChevronRight, FileCheck, Check, 
   AlertCircle, Activity, Award, Calendar, ChevronDown, ChevronUp, Lock
 } from 'lucide-react';
