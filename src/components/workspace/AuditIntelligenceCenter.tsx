@@ -69,311 +69,299 @@ export function AuditIntelligenceCenter({ onSelectTab }: AuditIntelligenceCenter
       {/* SECTION 0: AI FINAL DECISION ENGINE */}
       <AIFinalDecisionEngine />
 
-      {/* SECTION 1: ENGAGEMENT SNAPSHOT */}
+      {/* SECTION 1: EXECUTIVE SUMMARY */}
       <div className="space-y-3">
         <div className="flex items-center justify-between border-b border-[#DEE2E6] pb-2">
           <h2 className="text-xs font-bold text-[#005A9E] uppercase tracking-wider flex items-center gap-2">
-            <Layers className="h-4 w-4 text-[#005A9E]" /> Section 1 — Engagement Snapshot & Health Scorecard
+            <Sparkles className="h-4 w-4 text-[#005A9E]" /> Section 1 — Executive Summary (Board Briefing)
           </h2>
-          <span className="text-[11px] text-[#6C757D]">System Generated: July 22, 2026</span>
+          <Badge variant="outline" className="border-[#005A9E] text-[#005A9E]">1 Page Overview</Badge>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="shadow-sm border-[#DEE2E6] bg-white">
-            <CardContent className="p-4 space-y-2">
-              <span className="text-[11px] font-bold text-[#6C757D] uppercase tracking-wider block">Audit Metadata</span>
-              <div className="text-sm font-bold text-[#212529] line-clamp-1">Procure to Pay Automation Audit</div>
-              <div className="text-xs text-[#495057]">
-                <span className="font-semibold text-[#6C757D]">Dept:</span> Procurement & Treasury
+        <Card className="shadow-sm border-[#005A9E] bg-gradient-to-r from-[#E5F0FA]/60 via-white to-[#F8F9FA]">
+          <CardContent className="p-5 space-y-3">
+            <div className="flex items-center justify-between border-b border-[#DEE2E6] pb-2">
+              <div>
+                <span className="text-[10px] text-[#6C757D] uppercase font-bold block">Board & Audit Committee Memorandum</span>
+                <h3 className="text-sm font-black text-[#212529]">P2P Automation & Internal Financial Controls (ICFR) Planning Brief</h3>
               </div>
-              <div className="text-xs text-[#495057]">
-                <span className="font-semibold text-[#6C757D]">Type:</span> Financial & Operational ICFR
-              </div>
-              <div className="text-xs text-[#005A9E] font-medium">Financial Year FY2025-2026</div>
-            </CardContent>
-          </Card>
-
-          <Card className="shadow-sm border-[#DEE2E6] bg-[#F8F9FA]/80">
-            <CardContent className="p-4 space-y-2">
-              <span className="text-[11px] font-bold text-[#6C757D] uppercase tracking-wider block">Planning Readiness</span>
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-extrabold text-[#198754]">94%</span>
-                <Badge className="bg-[#198754] text-[10px]">Fieldwork Ready</Badge>
-              </div>
-              <Progress value={94} className="h-1.5 bg-[#E9ECEF] [&>div]:bg-[#198754]" />
-              <p className="text-[11px] text-[#6C757D]">13/13 required sources parsed with zero critical data gaps.</p>
-            </CardContent>
-          </Card>
-
-          <Card className="shadow-sm border-[#DEE2E6] bg-[#F8F9FA]/80">
-            <CardContent className="p-4 space-y-2">
-              <span className="text-[11px] font-bold text-[#6C757D] uppercase tracking-wider block">Overall AI Confidence</span>
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-extrabold text-[#005A9E]">96%</span>
-                <Badge variant="outline" className="border-[#005A9E] text-[#005A9E] bg-[#E5F0FA] text-[10px]">High Statistical Model Fit</Badge>
-              </div>
-              <Progress value={96} className="h-1.5 bg-[#E9ECEF] [&>div]:bg-[#005A9E]" />
-              <p className="text-[11px] text-[#6C757D]">100% General Ledger & Trial Balance traceability verified.</p>
-            </CardContent>
-          </Card>
-
-          <Card className="shadow-sm border-[#DEE2E6] bg-white">
-            <CardContent className="p-4 space-y-2">
-              <span className="text-[11px] font-bold text-[#6C757D] uppercase tracking-wider block">Health & Governance</span>
-              <div className="grid grid-cols-2 gap-2 text-center pt-1">
-                <div className="p-2 bg-[#F8F9FA] border rounded-sm">
-                  <span className="text-[10px] text-[#6C757D] uppercase block font-bold">Business Health</span>
-                  <span className="text-base font-extrabold text-[#856404]">82/100</span>
-                </div>
-                <div className="p-2 bg-[#F8F9FA] border rounded-sm">
-                  <span className="text-[10px] text-[#6C757D] uppercase block font-bold">Governance</span>
-                  <span className="text-base font-extrabold text-[#005A9E]">88/100</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      {/* SECTION 2: AI EXECUTIVE DECISION */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between border-b border-[#DEE2E6] pb-2">
-          <h2 className="text-xs font-bold text-[#005A9E] uppercase tracking-wider flex items-center gap-2">
-            <Zap className="h-4 w-4 text-[#005A9E]" /> Section 2 — AI Executive Decision Engine
-          </h2>
-          <Badge className="bg-[#856404] text-white">Action Required</Badge>
-        </div>
-
-        <Card className="shadow-md border-[#FFC107] bg-gradient-to-br from-[#FFFDF5] to-white">
-          <CardContent className="p-6 space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#DEE2E6] pb-4">
-              <div className="space-y-1">
-                <span className="text-xs font-bold text-[#6C757D] uppercase tracking-wider">Automated Audit Recommendation</span>
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl font-black text-[#856404]">PROCEED WITH CONDITIONS</span>
-                  <Badge className="bg-[#FFC107] text-[#212529] font-bold px-3 py-1">Moderate-to-High Operational Risk</Badge>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="text-right">
-                  <span className="text-[10px] text-[#6C757D] font-bold uppercase block">Model Confidence</span>
-                  <span className="text-lg font-black text-[#005A9E]">96.4%</span>
-                </div>
-                <div className="h-10 w-10 bg-[#E5F0FA] rounded-full flex items-center justify-center text-[#005A9E]">
-                  <Sparkles className="h-5 w-5" />
-                </div>
-              </div>
+              <Badge className="bg-[#005A9E] text-white text-[10px]">94% Readiness</Badge>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-[#495057]">
-              <div className="p-3.5 bg-white border border-[#DEE2E6] rounded-sm space-y-1.5 shadow-2xs">
-                <span className="font-bold text-[#212529] uppercase tracking-wider text-[11px] block text-[#005A9E]">Reason for Decision</span>
-                <p className="leading-relaxed">
-                  High planning readiness (94%) paired with 3 un-remediated repeat findings from FY24 and active Segregation of Duties (SoD) violations in SAP S/4HANA Vendor Master creation.
-                </p>
+            <p className="text-xs text-[#212529] font-medium leading-relaxed">
+              &quot;Comprehensive multi-document AI synthesis across 10 foundational enterprise sources confirms high overall planning readiness (94%) for the Procure to Pay FY26 audit engagement. Operating with $120M annual cash flow exposure, AI analysis highlights 3 repeat historical findings, active Segregation of Duties conflicts in SAP S/4HANA (SU01/ME21N), and $3.85M in held 3-way match exceptions requiring targeted fieldwork.&quot;
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 text-[11px]">
+              <div className="p-2 bg-white border rounded">
+                <span className="text-[#6C757D] block font-semibold">Financial Materiality:</span>
+                <span className="font-extrabold text-[#005A9E]">$1,500,000</span>
               </div>
-
-              <div className="p-3.5 bg-white border border-[#DEE2E6] rounded-sm space-y-1.5 shadow-2xs">
-                <span className="font-bold text-[#212529] uppercase tracking-wider text-[11px] block text-[#A80000]">Business Exposure</span>
-                <p className="leading-relaxed">
-                  $120M annual cash flow exposure. Identified $1.5M planning materiality with $3.85M in held invoices due to 3-way match exception backlogs.
-                </p>
+              <div className="p-2 bg-white border rounded">
+                <span className="text-[#6C757D] block font-semibold">High Exposure Accounts:</span>
+                <span className="font-extrabold text-[#A80000]">GL #2100 & #5400</span>
               </div>
-
-              <div className="p-3.5 bg-white border border-[#DEE2E6] rounded-sm space-y-1.5 shadow-2xs">
-                <span className="font-bold text-[#212529] uppercase tracking-wider text-[11px] block text-[#198754]">Expected Audit Benefit</span>
-                <p className="leading-relaxed">
-                  Eliminates fictitious vendor risk, recovers estimated $85,000 in lost early payment discounts, and secures full ICFR regulatory compliance before fiscal year-end close.
-                </p>
+              <div className="p-2 bg-white border rounded">
+                <span className="text-[#6C757D] block font-semibold">Repeat Findings:</span>
+                <span className="font-extrabold text-[#856404]">3 Un-remediated</span>
+              </div>
+              <div className="p-2 bg-white border rounded">
+                <span className="text-[#6C757D] block font-semibold">Substantive Scope:</span>
+                <span className="font-extrabold text-[#198754]">14 Txns &gt; $500K</span>
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* SECTION 3: EXECUTIVE QUESTION PANEL */}
+      {/* SECTION 2 & 3: AI FINAL OPINION & THREE AI QUESTIONS */}
+      <AIFinalDecisionEngine />
+
+      {/* SECTION 4: GENERATED PLANNING */}
       <div className="space-y-3">
         <div className="flex items-center justify-between border-b border-[#DEE2E6] pb-2">
           <h2 className="text-xs font-bold text-[#005A9E] uppercase tracking-wider flex items-center gap-2">
-            <HelpCircle className="h-4 w-4 text-[#005A9E]" /> Section 3 — Executive Question Panel (Auto-Synthesized Answers)
+            <FileText className="h-4 w-4 text-[#005A9E]" /> Section 4 — Generated Audit Planning (Memorandum & Scoping)
           </h2>
-          <span className="text-[11px] text-[#6C757D]">3 Core Audit Questions Evaluated</span>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Question 1 */}
-          <Card className="shadow-sm border-[#DEE2E6] bg-white">
-            <CardHeader className="p-4 pb-2 bg-[#F8F9FA]/60 border-b border-[#DEE2E6] flex flex-row items-center justify-between">
-              <span className="text-xs font-bold text-[#212529]">Any Penalties or Fines?</span>
-              <Badge className="bg-[#A80000] text-white font-bold px-2 py-0.5">YES</Badge>
-            </CardHeader>
-            <CardContent className="p-4 space-y-2.5 text-xs">
-              <div>
-                <span className="font-semibold text-[#6C757D] block">Reason:</span>
-                <p className="text-[#212529]">Tax authority notice issued May 15 regarding delayed vendor withholding tax filings.</p>
-              </div>
-              <div>
-                <span className="font-semibold text-[#6C757D] block">Evidence:</span>
-                <p className="text-[#005A9E]">Statutory Tax Notice & Penalty Ledger ($42,500 accrued).</p>
-              </div>
-              <div className="flex justify-between items-center pt-2 border-t border-[#DEE2E6] text-[11px]">
-                <span>Confidence: <strong className="text-[#198754]">98%</strong></span>
-                <Badge variant="outline" className="border-[#A80000] text-[#A80000]">HIGH Priority</Badge>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Question 2 */}
-          <Card className="shadow-sm border-[#DEE2E6] bg-white">
-            <CardHeader className="p-4 pb-2 bg-[#F8F9FA]/60 border-b border-[#DEE2E6] flex flex-row items-center justify-between">
-              <span className="text-xs font-bold text-[#212529]">Any Fraud Indicators?</span>
-              <Badge className="bg-[#A80000] text-white font-bold px-2 py-0.5">YES</Badge>
-            </CardHeader>
-            <CardContent className="p-4 space-y-2.5 text-xs">
-              <div>
-                <span className="font-semibold text-[#6C757D] block">Reason:</span>
-                <p className="text-[#212529]">Dual-role privileges in SAP (6 users hold both Vendor Master Create and Invoice Approval permissions).</p>
-              </div>
-              <div>
-                <span className="font-semibold text-[#6C757D] block">Evidence:</span>
-                <p className="text-[#005A9E]">SAP User Role Matrix (T-code SU01) & Finding #4 FY24.</p>
-              </div>
-              <div className="flex justify-between items-center pt-2 border-t border-[#DEE2E6] text-[11px]">
-                <span>Confidence: <strong className="text-[#198754]">94%</strong></span>
-                <Badge className="bg-[#A80000]">CRITICAL Priority</Badge>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Question 3 */}
-          <Card className="shadow-sm border-[#DEE2E6] bg-white">
-            <CardHeader className="p-4 pb-2 bg-[#F8F9FA]/60 border-b border-[#DEE2E6] flex flex-row items-center justify-between">
-              <span className="text-xs font-bold text-[#212529]">Any High Risk Observations?</span>
-              <Badge className="bg-[#A80000] text-white font-bold px-2 py-0.5">YES</Badge>
-            </CardHeader>
-            <CardContent className="p-4 space-y-2.5 text-xs">
-              <div>
-                <span className="font-semibold text-[#6C757D] block">Reason:</span>
-                <p className="text-[#212529]">Manual payment overrides in Citibank Gateway & $3.85M in 3-way match exceptions un-cleared &gt;30 days.</p>
-              </div>
-              <div>
-                <span className="font-semibold text-[#6C757D] block">Evidence:</span>
-                <p className="text-[#005A9E]">AP Sub-ledger Exception Log & Payment Gateway Logs.</p>
-              </div>
-              <div className="flex justify-between items-center pt-2 border-t border-[#DEE2E6] text-[11px]">
-                <span>Confidence: <strong className="text-[#198754]">95%</strong></span>
-                <Badge variant="outline" className="border-[#A80000] text-[#A80000]">HIGH Priority</Badge>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      {/* SECTION 4: BUSINESS UNDERSTANDING SUMMARY */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between border-b border-[#DEE2E6] pb-2">
-          <h2 className="text-xs font-bold text-[#005A9E] uppercase tracking-wider flex items-center gap-2">
-            <Building2 className="h-4 w-4 text-[#005A9E]" /> Section 4 — Business Understanding Architecture
-          </h2>
-          <Button variant="ghost" size="sm" onClick={() => handleTabClick('business-understanding')} className="text-xs text-[#005A9E] h-7">
-            Open Business View <ChevronRight className="h-3 w-3 ml-1" />
+          <Button variant="outline" size="sm" onClick={() => handleTabClick('planning-memo')} className="text-xs border-[#005A9E] text-[#005A9E] hover:bg-[#E5F0FA] h-7 font-bold">
+            Open Full Planning <ExternalLink className="h-3 w-3 ml-1" />
           </Button>
         </div>
 
         <Card className="shadow-sm border-[#DEE2E6] bg-white">
-          <CardContent className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
-            <div className="space-y-3 md:border-r border-[#DEE2E6] md:pr-6">
-              <div>
-                <span className="font-bold text-[#212529] uppercase tracking-wider text-[11px] block mb-1">Strategic Objective</span>
-                <p className="text-[#495057] leading-relaxed">
-                  Ensure efficient, compliant procurement supporting $120M annual cash flow while mitigating third-party risks and optimizing working capital.
-                </p>
-              </div>
-              <div>
-                <span className="font-bold text-[#212529] uppercase tracking-wider text-[11px] block mb-1">End-to-End Process</span>
-                <p className="text-[#495057] leading-relaxed">
-                  Procure to Pay (P2P) spanning requisitioning, vendor selection, PO approval, goods receipt, 3-way matching, and treasury disbursement.
-                </p>
-              </div>
+          <CardContent className="p-5 grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
+            <div className="space-y-2 md:border-r border-[#DEE2E6] md:pr-4">
+              <span className="font-bold text-[#005A9E] uppercase text-[10px] block">Planning Memorandum</span>
+              <p className="font-bold text-[#212529]">P2P FY26 Master Audit Plan & Scoping Strategy</p>
+              <p className="text-[#6C757D] leading-relaxed">
+                Covers audit objectives, risk-based sampling rules, materiality thresholds ($1.5M), and testing schedules for Procurement, AP, and Treasury.
+              </p>
             </div>
-
-            <div className="space-y-3 md:border-r border-[#DEE2E6] md:pr-6">
-              <div>
-                <span className="font-bold text-[#212529] uppercase tracking-wider text-[11px] block mb-1">Critical Core Systems</span>
-                <div className="flex flex-wrap gap-1.5 pt-1">
-                  <Badge variant="secondary" className="bg-[#F8F9FA] border border-[#DEE2E6] text-[#212529]">SAP S/4HANA ERP</Badge>
-                  <Badge variant="secondary" className="bg-[#F8F9FA] border border-[#DEE2E6] text-[#212529]">SAP Ariba Portal</Badge>
-                  <Badge variant="secondary" className="bg-[#F8F9FA] border border-[#DEE2E6] text-[#212529]">Citibank Direct API</Badge>
-                </div>
-              </div>
-              <div>
-                <span className="font-bold text-[#212529] uppercase tracking-wider text-[11px] block mb-1">Key Departments</span>
-                <p className="text-[#495057]">Procurement, Accounts Payable, Warehouse Logistics, Corporate Treasury, IT Security.</p>
-              </div>
+            <div className="space-y-2 md:border-r border-[#DEE2E6] md:pr-4">
+              <span className="font-bold text-[#005A9E] uppercase text-[10px] block">Scoping Parameters</span>
+              <p className="font-bold text-[#212529]">In-Scope Entity & Systems</p>
+              <p className="text-[#6C757D]">
+                SAP S/4HANA ERP, SAP Ariba Portal, Citibank Gateway API. 14 high-value vendor disbursement channels.
+              </p>
             </div>
-
-            <div className="space-y-3">
+            <div className="space-y-2 flex flex-col justify-between">
               <div>
-                <span className="font-bold text-[#212529] uppercase tracking-wider text-[11px] block mb-1">Key Control Owners</span>
-                <p className="text-[#495057]">Chief Procurement Officer, VP of Accounts Payable, Corporate Controller, Treasury Director.</p>
+                <span className="font-bold text-[#198754] uppercase text-[10px] block">Audit Program Status</span>
+                <p className="font-bold text-[#212529]">12 Test Procedures Formulated</p>
+                <p className="text-[#6C757D]">100% mapped to Risk Control Matrix (RCM) controls C-01 through C-12.</p>
               </div>
-              <div>
-                <span className="font-bold text-[#212529] uppercase tracking-wider text-[11px] block mb-1">Process Maturity Stage</span>
-                <div className="flex items-center justify-between p-2 bg-[#F8F9FA] border rounded-sm mt-1">
-                  <span className="font-bold text-[#005A9E]">Level 3 (Defined)</span>
-                  <span className="text-[10px] text-[#6C757D]">66% Automated / 34% Manual</span>
-                </div>
-              </div>
+              <Button size="sm" onClick={() => handleTabClick('scoping-document')} className="bg-[#005A9E] text-white hover:bg-[#004578] text-xs h-8">
+                View Scoping Document
+              </Button>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* SECTION 5: AI GENERATED PROCESS FLOW MINIATURE PREVIEW */}
+      {/* SECTION 5: GENERATED SOP */}
       <div className="space-y-3">
         <div className="flex items-center justify-between border-b border-[#DEE2E6] pb-2">
           <h2 className="text-xs font-bold text-[#005A9E] uppercase tracking-wider flex items-center gap-2">
-            <GitBranch className="h-4 w-4 text-[#005A9E]" /> Section 5 — BPMN Process Architecture Preview
+            <FileCheck className="h-4 w-4 text-[#005A9E]" /> Section 5 — Generated Standard Operating Procedure (SOP)
           </h2>
-          <Button variant="outline" size="sm" onClick={() => handleTabClick('process-flow')} className="text-xs border-[#005A9E] text-[#005A9E] h-7">
-            Open Full Process Flow
+          <Button variant="outline" size="sm" onClick={() => handleTabClick('sop-review')} className="text-xs border-[#005A9E] text-[#005A9E] hover:bg-[#E5F0FA] h-7 font-bold">
+            Open Full SOP <ExternalLink className="h-3 w-3 ml-1" />
+          </Button>
+        </div>
+
+        <Card className="shadow-sm border-[#DEE2E6] bg-white">
+          <CardContent className="p-5 grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
+            <div className="space-y-2 md:border-r border-[#DEE2E6] md:pr-4">
+              <span className="font-bold text-[#005A9E] uppercase text-[10px] block">SOP Document Name</span>
+              <p className="font-bold text-[#212529]">P2P Standard Operating Procedure v2.4 (Synthesized)</p>
+              <Badge className="bg-[#198754] text-white text-[10px]">100% Standardized</Badge>
+            </div>
+            <div className="space-y-2 md:border-r border-[#DEE2E6] md:pr-4">
+              <span className="font-bold text-[#005A9E] uppercase text-[10px] block">Key SOP Sections</span>
+              <ul className="list-disc pl-4 space-y-1 text-[#495057]">
+                <li>Sec 4.1: Vendor Master Onboarding & Banking</li>
+                <li>Sec 6.3: Tax Deductions (TDS) & Remittance</li>
+                <li>Sec 7.2: 3-Way Match & Override Approvals</li>
+              </ul>
+            </div>
+            <div className="space-y-2 flex flex-col justify-between">
+              <div>
+                <span className="font-bold text-[#856404] uppercase text-[10px] block">Gap Analysis</span>
+                <p className="text-[#212529] font-medium">2 Control Gaps Detected vs Best Practice</p>
+                <p className="text-[#6C757D]">Missing automated call-back verification for manual bank account updates.</p>
+              </div>
+              <Button size="sm" onClick={() => handleTabClick('sop-review')} className="bg-[#005A9E] text-white hover:bg-[#004578] text-xs h-8">
+                Review & Edit SOP
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* SECTION 6 & 7: GENERATED PROCESS FLOW & PROCESS FLOW DOCUMENT */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between border-b border-[#DEE2E6] pb-2">
+          <h2 className="text-xs font-bold text-[#005A9E] uppercase tracking-wider flex items-center gap-2">
+            <GitBranch className="h-4 w-4 text-[#005A9E]" /> Section 6 & 7 — Generated Process Flow (Miniature BPMN & Document)
+          </h2>
+          <Button variant="outline" size="sm" onClick={() => handleTabClick('process-flow')} className="text-xs border-[#005A9E] text-[#005A9E] hover:bg-[#E5F0FA] h-7 font-bold">
+            View Full Flowchart <ExternalLink className="h-3 w-3 ml-1" />
           </Button>
         </div>
 
         <Card className="shadow-sm border-[#DEE2E6] bg-[#F8F9FA]">
-          <CardContent className="p-6">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-center">
+          <CardContent className="p-6 space-y-4">
+            <div className="text-[11px] font-bold text-[#6C757D] uppercase tracking-wider">
+              Process Flow Structure: Input → Process Activity → Decision Activity → Output
+            </div>
+
+            <div className="flex flex-col md:flex-row items-center justify-between gap-3 text-center">
               
-              <div className="flex-1 p-3 bg-white border border-[#DEE2E6] rounded-sm shadow-2xs w-full">
-                <span className="text-[10px] font-bold text-[#6C757D] uppercase block">Input Node</span>
-                <div className="font-bold text-xs text-[#212529] mt-0.5">Requisition & Vendor Onboarding</div>
-                <div className="text-[10px] text-[#005A9E] mt-1">Ariba Procurement Portal</div>
+              {/* INPUT */}
+              <div className="flex-1 p-3.5 bg-white border border-[#DEE2E6] rounded-sm shadow-2xs w-full text-left">
+                <Badge className="bg-[#005A9E] text-white text-[9px] uppercase font-bold mb-1">1. Input</Badge>
+                <div className="font-black text-xs text-[#212529]">Purchase Requisition & Vendor Master Data</div>
+                <div className="text-[10px] text-[#6C757D] mt-1">Source: SAP Ariba Portal & Vendor Registration</div>
               </div>
 
               <ArrowRight className="h-5 w-5 text-[#005A9E] shrink-0 rotate-90 md:rotate-0" />
 
-              <div className="flex-1 p-3 bg-white border border-[#DEE2E6] rounded-sm shadow-2xs w-full">
-                <span className="text-[10px] font-bold text-[#6C757D] uppercase block">Process Step</span>
-                <div className="font-bold text-xs text-[#212529] mt-0.5">PO Creation & Release Strategy</div>
-                <div className="text-[10px] text-[#005A9E] mt-1">SAP T-Code ME21N</div>
+              {/* PROCESS ACTIVITY */}
+              <div className="flex-1 p-3.5 bg-white border border-[#DEE2E6] rounded-sm shadow-2xs w-full text-left">
+                <Badge className="bg-[#005A9E] text-white text-[9px] uppercase font-bold mb-1">2. Process Activity</Badge>
+                <div className="font-black text-xs text-[#212529]">PO Creation, Goods Receipt & Invoice Posting</div>
+                <div className="text-[10px] text-[#6C757D] mt-1">System: SAP S/4HANA (ME21N / MIGO / MIRO)</div>
               </div>
 
               <ArrowRight className="h-5 w-5 text-[#005A9E] shrink-0 rotate-90 md:rotate-0" />
 
-              <div className="flex-1 p-3 bg-white border border-[#A80000] rounded-sm shadow-2xs bg-[#FDF2F2] w-full">
-                <span className="text-[10px] font-bold text-[#A80000] uppercase block">Decision Gate (High Risk)</span>
-                <div className="font-bold text-xs text-[#212529] mt-0.5">3-Way Match Validation</div>
-                <div className="text-[10px] text-[#A80000] mt-1">PO vs GRN vs Invoice (MIRO)</div>
+              {/* DECISION ACTIVITY */}
+              <div className="flex-1 p-3.5 bg-white border-2 border-[#A80000] rounded-sm shadow-2xs bg-[#FDF2F2] w-full text-left">
+                <Badge className="bg-[#A80000] text-white text-[9px] uppercase font-bold mb-1">3. Decision Activity</Badge>
+                <div className="font-black text-xs text-[#212529]">Automated 3-Way Match & Variance Tolerances</div>
+                <div className="text-[10px] text-[#A80000] mt-1">High Risk Gate: Exception Overrides Require CPO Approval</div>
               </div>
 
               <ArrowRight className="h-5 w-5 text-[#005A9E] shrink-0 rotate-90 md:rotate-0" />
 
-              <div className="flex-1 p-3 bg-white border border-[#DEE2E6] rounded-sm shadow-2xs w-full">
-                <span className="text-[10px] font-bold text-[#6C757D] uppercase block">Output Node</span>
-                <div className="font-bold text-xs text-[#212529] mt-0.5">Treasury Payment Execution</div>
-                <div className="text-[10px] text-[#005A9E] mt-1">Citibank Gateway API</div>
+              {/* OUTPUT */}
+              <div className="flex-1 p-3.5 bg-white border border-[#DEE2E6] rounded-sm shadow-2xs w-full text-left">
+                <Badge className="bg-[#198754] text-white text-[9px] uppercase font-bold mb-1">4. Output</Badge>
+                <div className="font-black text-xs text-[#212529]">Payment Batch Dispatch & Ledger Settlement</div>
+                <div className="text-[10px] text-[#6C757D] mt-1">Host-to-Host: Citibank Direct API</div>
               </div>
 
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* SECTION 8: ANALYTICS DASHBOARD */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between border-b border-[#DEE2E6] pb-2">
+          <h2 className="text-xs font-bold text-[#005A9E] uppercase tracking-wider flex items-center gap-2">
+            <BarChart3 className="h-4 w-4 text-[#005A9E]" /> Section 8 — Analytics Dashboard
+          </h2>
+          <Button variant="ghost" size="sm" onClick={() => handleTabClick('analytics')} className="text-xs text-[#005A9E] h-7">
+            Full Analytics <ChevronRight className="h-3 w-3 ml-1" />
+          </Button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Risk Distribution */}
+          <Card className="shadow-sm border-[#DEE2E6] bg-white">
+            <CardHeader className="p-3 border-b border-[#DEE2E6] bg-[#F8F9FA]/50">
+              <CardTitle className="text-xs font-bold text-[#212529]">1. Risk Distribution</CardTitle>
+            </CardHeader>
+            <CardContent className="p-4 space-y-2 text-xs">
+              <div className="flex justify-between items-center p-2 bg-[#FDF2F2] rounded border border-red-200">
+                <span className="font-bold text-[#A80000]">High / Critical Risks</span>
+                <Badge className="bg-[#A80000]">4 Risks</Badge>
+              </div>
+              <div className="flex justify-between items-center p-2 bg-[#FFFDF5] rounded border border-yellow-200">
+                <span className="font-bold text-[#856404]">Medium Risks</span>
+                <Badge className="bg-[#FFC107] text-[#212529]">5 Risks</Badge>
+              </div>
+              <div className="flex justify-between items-center p-2 bg-[#F0FDF4] rounded border border-green-200">
+                <span className="font-bold text-[#198754]">Low / Controlled Risks</span>
+                <Badge className="bg-[#198754]">3 Risks</Badge>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Financial Materiality */}
+          <Card className="shadow-sm border-[#DEE2E6] bg-white">
+            <CardHeader className="p-3 border-b border-[#DEE2E6] bg-[#F8F9FA]/50">
+              <CardTitle className="text-xs font-bold text-[#212529]">2. Financial Materiality</CardTitle>
+            </CardHeader>
+            <CardContent className="p-4 space-y-2 text-xs">
+              <div className="flex justify-between items-center p-2 bg-[#F8F9FA] rounded border">
+                <span className="text-[#6C757D] font-bold">Overall Materiality:</span>
+                <span className="font-extrabold text-[#005A9E]">$1,500,000</span>
+              </div>
+              <div className="flex justify-between items-center p-2 bg-[#F8F9FA] rounded border">
+                <span className="text-[#6C757D] font-bold">Performance Materiality:</span>
+                <span className="font-extrabold text-[#005A9E]">$1,125,000</span>
+              </div>
+              <div className="flex justify-between items-center p-2 bg-[#F8F9FA] rounded border">
+                <span className="text-[#6C757D] font-bold">Exception Backlog:</span>
+                <span className="font-extrabold text-[#A80000]">$3,850,000</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Historical Findings Trend */}
+          <Card className="shadow-sm border-[#DEE2E6] bg-white">
+            <CardHeader className="p-3 border-b border-[#DEE2E6] bg-[#F8F9FA]/50">
+              <CardTitle className="text-xs font-bold text-[#212529]">3. Historical Findings & Control Effectiveness</CardTitle>
+            </CardHeader>
+            <CardContent className="p-4 space-y-2 text-xs">
+              <div className="flex justify-between items-center p-2 bg-[#F8F9FA] rounded border">
+                <span className="text-[#6C757D] font-bold">Control Effectiveness:</span>
+                <span className="font-bold text-[#856404]">72% Effective</span>
+              </div>
+              <div className="flex justify-between items-center p-2 bg-[#F8F9FA] rounded border">
+                <span className="text-[#6C757D] font-bold">Planning Readiness:</span>
+                <span className="font-bold text-[#198754]">94% Fieldwork Ready</span>
+              </div>
+              <div className="flex justify-between items-center p-2 bg-[#F8F9FA] rounded border">
+                <span className="text-[#6C757D] font-bold">Top Risk Area:</span>
+                <span className="font-bold text-[#A80000]">SAP SU01 SoD Bypass</span>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* SECTION 9: REVIEW & EDIT */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between border-b border-[#DEE2E6] pb-2">
+          <h2 className="text-xs font-bold text-[#005A9E] uppercase tracking-wider flex items-center gap-2">
+            <CheckCircle2 className="h-4 w-4 text-[#005A9E]" /> Section 9 — Auditor Review, Edit & Final Approval
+          </h2>
+          <span className="text-[11px] text-[#6C757D]">Auditor Sign-off Required Before Fieldwork</span>
+        </div>
+
+        <Card className="shadow-sm border-[#005A9E] bg-white">
+          <CardContent className="p-5 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="space-y-1">
+              <h3 className="text-sm font-bold text-[#212529]">Review & Modify Generated Audit Planning Outputs</h3>
+              <p className="text-xs text-[#6C757D]">
+                Audit partners can adjust scope parameters, edit SOP text, tweak process flow nodes, or re-assign control priorities before issuing the final plan.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2 shrink-0">
+              <Button size="sm" variant="outline" onClick={() => handleTabClick('planning-memo')} className="text-xs border-[#005A9E] text-[#005A9E]">
+                Edit Planning Memo
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => handleTabClick('sop-review')} className="text-xs border-[#005A9E] text-[#005A9E]">
+                Edit SOP
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => handleTabClick('process-flow')} className="text-xs border-[#005A9E] text-[#005A9E]">
+                Edit Process Flow
+              </Button>
+              <Button size="sm" onClick={() => toast.success("AI Audit Plan Approved by Lead Auditor!")} className="bg-[#198754] text-white hover:bg-[#146c43] text-xs font-bold">
+                <CheckCircle2 className="h-3.5 w-3.5 mr-1" /> Approve & Sign Off
+              </Button>
             </div>
           </CardContent>
         </Card>

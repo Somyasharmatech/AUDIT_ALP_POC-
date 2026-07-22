@@ -8,7 +8,7 @@ import { Progress } from '@/src/components/ui/progress';
 import { 
   ArrowLeft, Upload, CheckCircle2, Sparkles, AlertCircle, FileText, Settings, 
   Building2, Layers, Check, FileCheck, Target, DollarSign, Activity, GitBranch,
-  ShieldAlert, BookOpen, User, Clock, FileSpreadsheet, Loader2, ListChecks, History, BarChart3, Database, ShieldCheck
+  ShieldAlert, BookOpen, User, Clock, FileSpreadsheet, Loader2, ListChecks, History, BarChart3, Database, ShieldCheck, ChevronDown, ChevronRight
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -42,43 +42,28 @@ type Document = {
 const REQUIRED_DOCUMENTS: Document[] = [
   { id: '1', name: 'Previous Audit Report', status: 'Awaiting Upload', required: true, types: 'PDF, DOCX' },
   { id: '2', name: 'Current Year Documents', status: 'Awaiting Upload', required: true, types: 'PDF, DOCX, XLSX' },
-  { id: '3', name: 'Government Notifications', status: 'Awaiting Upload', required: false, types: 'PDF' },
-  { id: '4', name: 'Regulatory Circulars', status: 'Awaiting Upload', required: false, types: 'PDF' },
-  { id: '5', name: 'Balance Sheet', status: 'Awaiting Upload', required: true, types: 'XLSX, CSV' },
-  { id: '6', name: 'Trial Balance', status: 'Awaiting Upload', required: true, types: 'XLSX, CSV' },
-  { id: '7', name: 'SOP', status: 'Awaiting Upload', required: true, types: 'PDF, DOCX' },
-  { id: '8', name: 'Operations Manual', status: 'Awaiting Upload', required: false, types: 'PDF, DOCX' },
-  { id: '9', name: 'Risk Register', status: 'Awaiting Upload', required: true, types: 'XLSX' },
-  { id: '10', name: 'Fraud Register', status: 'Awaiting Upload', required: false, types: 'XLSX' },
-  { id: '11', name: 'RCM', status: 'Awaiting Upload', required: false, types: 'XLSX' },
-  { id: '12', name: 'Previous Process Flow', status: 'Awaiting Upload', required: false, types: 'PDF, VSDX' },
-  { id: '13', name: 'Policy Documents', status: 'Awaiting Upload', required: false, types: 'PDF' },
+  { id: '3', name: 'Balance Sheet', status: 'Awaiting Upload', required: true, types: 'XLSX, CSV' },
+  { id: '4', name: 'Trial Balance', status: 'Awaiting Upload', required: true, types: 'XLSX, CSV' },
+  { id: '5', name: 'SOP', status: 'Awaiting Upload', required: true, types: 'PDF, DOCX' },
+  { id: '6', name: 'Operations Manual', status: 'Awaiting Upload', required: false, types: 'PDF, DOCX' },
+  { id: '7', name: 'Government Notifications', status: 'Awaiting Upload', required: false, types: 'PDF' },
+  { id: '8', name: 'Risk Register', status: 'Awaiting Upload', required: true, types: 'XLSX' },
+  { id: '9', name: 'Fraud Register', status: 'Awaiting Upload', required: false, types: 'XLSX' },
+  { id: '10', name: 'RCM', status: 'Awaiting Upload', required: false, types: 'XLSX' },
 ];
 
 const PROCESSING_STEPS = [
   'Reading Previous Audit Report',
   'Reading Current Year Documents',
-  'Reading Government Notifications',
-  'Reading SOP',
-  'Reading Balance Sheet',
-  'Reading Trial Balance',
-  'Reading Risk Register',
-  'Reading Fraud Register',
-  'Reading RCM',
-  'Extracting Business Processes',
-  'Building SOP Summary',
+  'Understanding Business Process',
+  'Comparing Previous vs Current Year',
+  'Generating Planning',
+  'Generating SOP',
   'Generating Process Flow',
-  'Historical Audit Analysis',
-  'Financial Analysis',
-  'Materiality Calculation',
-  'Control Analysis',
-  'Risk Assessment',
-  'Penalty Detection',
-  'Fraud Detection',
-  'High Risk Detection',
-  'Planning Memorandum',
-  'Scoping Document',
-  'Audit Program'
+  'Assessing Risks',
+  'Generating Analytics',
+  'Preparing Executive Summary',
+  'Generating Final Audit Opinion'
 ];
 
 export default function AuditWorkspace() {
@@ -100,7 +85,8 @@ export default function AuditWorkspace() {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
   // Results state
-  const [activeTab, setActiveTab] = useState('knowledge-extraction');
+  const [activeTab, setActiveTab] = useState('audit-intelligence-center');
+  const [advancedOpen, setAdvancedOpen] = useState(false);
 
   const handleUpload = (docId: string) => {
     setDocuments(docs => docs.map(d => 
@@ -148,38 +134,105 @@ export default function AuditWorkspace() {
         {phase === 'results' && (
           <div className="w-64 bg-white border-r border-[#DEE2E6] flex flex-col shrink-0">
              <div className="p-4 border-b border-[#DEE2E6]">
-               <h2 className="text-[14px] font-bold text-[#212529] uppercase tracking-wider">AI Outputs</h2>
+               <h2 className="text-[12px] font-bold text-[#005A9E] uppercase tracking-wider">Audit Engagement Hub</h2>
              </div>
-              <div className="flex-1 overflow-y-auto py-2">
-                {[
-                  { id: 'knowledge-extraction', label: 'Knowledge Extraction', icon: Database },
-                  { id: 'audit-intelligence-center', label: 'Audit Intelligence Center', icon: ShieldCheck },
-                  { id: 'executive-summary', label: 'Executive Summary', icon: Sparkles },
-                  { id: 'business-understanding', label: 'Business Understanding', icon: Building2 },
-                  { id: 'sop-review', label: 'SOP Review & Edit', icon: FileCheck },
-                  { id: 'process-flow', label: 'Process Flow', icon: GitBranch },
-                  { id: 'historical', label: 'Historical Analysis', icon: History },
-                  { id: 'financial', label: 'Financial Analysis', icon: DollarSign },
-                  { id: 'risk-assessment', label: 'Risk Assessment', icon: ShieldAlert },
-                  { id: 'analytics', label: 'Enterprise Analytics', icon: BarChart3 },
-                  { id: 'planning-memo', label: 'Planning Memorandum', icon: FileText },
-                  { id: 'scoping-document', label: 'Scoping Document', icon: Target },
-                  { id: 'audit-program', label: 'Audit Program', icon: ListChecks },
-                  { id: 'final-review', label: 'Final Review & Package', icon: CheckCircle2 },
-                ].map(item => (
+              <div className="flex-1 overflow-y-auto py-2 space-y-1">
+                {/* PRIMARY OUTPUT */}
+                <button
+                  onClick={() => setActiveTab('audit-intelligence-center')}
+                  className={`w-full flex items-center gap-2.5 px-4 py-2.5 text-xs text-left transition-colors font-bold ${
+                    activeTab === 'audit-intelligence-center' 
+                      ? 'bg-[#005A9E] text-white' 
+                      : 'text-[#005A9E] hover:bg-[#E5F0FA]'
+                  }`}
+                >
+                  <ShieldCheck className="h-4 w-4 shrink-0" />
+                  <span>AI Audit Planning Results</span>
+                </button>
+
+                <div className="pt-2 px-3 pb-1 text-[10px] font-bold text-[#6C757D] uppercase tracking-wider">
+                  Working Deliverables
+                </div>
+
+                <button
+                  onClick={() => setActiveTab('executive-summary')}
+                  className={`w-full flex items-center gap-2.5 px-4 py-2 text-xs text-left transition-colors ${
+                    activeTab === 'executive-summary' 
+                      ? 'bg-[#E5F0FA] text-[#005A9E] font-bold border-r-2 border-[#005A9E]' 
+                      : 'text-[#495057] hover:bg-[#F8F9FA]'
+                  }`}
+                >
+                  <Sparkles className="h-4 w-4 shrink-0 text-[#005A9E]" />
+                  <span>Executive Audit Report</span>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('sop-review')}
+                  className={`w-full flex items-center gap-2.5 px-4 py-2 text-xs text-left transition-colors ${
+                    activeTab === 'sop-review' 
+                      ? 'bg-[#E5F0FA] text-[#005A9E] font-bold border-r-2 border-[#005A9E]' 
+                      : 'text-[#495057] hover:bg-[#F8F9FA]'
+                  }`}
+                >
+                  <FileCheck className="h-4 w-4 shrink-0 text-[#005A9E]" />
+                  <span>Generated SOP Review</span>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('process-flow')}
+                  className={`w-full flex items-center gap-2.5 px-4 py-2 text-xs text-left transition-colors ${
+                    activeTab === 'process-flow' 
+                      ? 'bg-[#E5F0FA] text-[#005A9E] font-bold border-r-2 border-[#005A9E]' 
+                      : 'text-[#495057] hover:bg-[#F8F9FA]'
+                  }`}
+                >
+                  <GitBranch className="h-4 w-4 shrink-0 text-[#005A9E]" />
+                  <span>Process Flow & BPMN</span>
+                </button>
+
+                {/* ADVANCED REPORTS COLLAPSIBLE SECTION */}
+                <div className="pt-3 border-t border-[#DEE2E6] mt-2">
                   <button
-                    key={item.id}
-                    onClick={() => setActiveTab(item.id)}
-                    className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm text-left transition-colors ${
-                      activeTab === item.id 
-                        ? 'bg-[#E5F0FA] text-[#005A9E] border-r-2 border-[#005A9E] font-medium' 
-                        : 'text-[#495057] hover:bg-[#F8F9FA]'
-                    }`}
+                    onClick={() => setAdvancedOpen(!advancedOpen)}
+                    className="w-full flex items-center justify-between px-4 py-2 text-xs font-bold text-[#6C757D] uppercase tracking-wider hover:bg-[#F8F9FA]"
                   >
-                    <item.icon className="h-4 w-4 shrink-0" />
-                    {item.label}
+                    <span className="flex items-center gap-2">
+                      <Layers className="h-3.5 w-3.5" /> Advanced Reports
+                    </span>
+                    {advancedOpen ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
                   </button>
-                ))}
+
+                  {advancedOpen && (
+                    <div className="pl-2 space-y-0.5 bg-[#F8F9FA] py-1 border-y border-[#DEE2E6]">
+                      {[
+                        { id: 'knowledge-extraction', label: 'Knowledge Extraction', icon: Database },
+                        { id: 'business-understanding', label: 'Business Understanding', icon: Building2 },
+                        { id: 'historical', label: 'Historical Analysis', icon: History },
+                        { id: 'financial', label: 'Financial Analysis', icon: DollarSign },
+                        { id: 'risk-assessment', label: 'Risk Assessment', icon: ShieldAlert },
+                        { id: 'analytics', label: 'Enterprise Analytics', icon: BarChart3 },
+                        { id: 'planning-memo', label: 'Planning Memorandum', icon: FileText },
+                        { id: 'scoping-document', label: 'Scoping Document', icon: Target },
+                        { id: 'audit-program', label: 'Audit Program', icon: ListChecks },
+                        { id: 'final-review', label: 'AI Traceability', icon: CheckCircle2 },
+                      ].map(item => (
+                        <button
+                          key={item.id}
+                          onClick={() => setActiveTab(item.id)}
+                          className={`w-full flex items-center gap-2.5 px-3 py-1.5 text-[11px] text-left transition-colors ${
+                            activeTab === item.id 
+                              ? 'bg-[#E5F0FA] text-[#005A9E] font-bold' 
+                              : 'text-[#495057] hover:bg-[#E9ECEF]'
+                          }`}
+                        >
+                          <item.icon className="h-3.5 w-3.5 shrink-0 text-[#6C757D]" />
+                          <span className="truncate">{item.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
              </div>
           </div>
         )}
@@ -282,7 +335,7 @@ export default function AuditWorkspace() {
                   {/* UPLOAD DOCUMENT MATRIX */}
                   <div className="space-y-2">
                     <h3 className="text-xs font-bold text-[#005A9E] uppercase tracking-wider flex items-center gap-2 border-b border-[#DEE2E6] pb-2">
-                      <Upload className="h-4 w-4 text-[#005A9E]" /> Required Foundational Enterprise Documents (13 Sources)
+                      <Upload className="h-4 w-4 text-[#005A9E]" /> Required Foundational Enterprise Documents (10 Sources)
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {documents.map(doc => (
